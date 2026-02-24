@@ -1,15 +1,12 @@
-import { Controller } from '@nestjs/common';
 import { Role } from '@prisma/client';
-
-@Controller('register')
 export class AuthResponseDto {
   accessToken: string;
   refreshToken: string;
   user: {
     id: string;
     email: string;
-    firstName: string | null;
-    lastName: string | null;
+    firstname: string | null;
+    lastname: string | null;
     role: Role;
-  }
+  };
 }
