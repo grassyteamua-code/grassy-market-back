@@ -1,4 +1,11 @@
-import { Body, Controller, HttpCode, HttpStatus, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpCode,
+  HttpStatus,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RefreshTokenStrategy } from './strategies/refresh-token.strategy';
 import { GetUser } from '../../common/decorators/get-user.decorator';
@@ -26,7 +33,7 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   async logout(@GetUser('id') userId: string): Promise<{ message: string }> {
     await this.authService.logout(userId);
-    return { message: 'Successfully logged out.' }
+    return { message: 'Successfully logged out.' };
   }
 
   @Post('login')

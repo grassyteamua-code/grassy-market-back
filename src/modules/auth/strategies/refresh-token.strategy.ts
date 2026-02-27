@@ -7,7 +7,10 @@ import { Request } from 'express';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
-export class RefreshTokenStrategy extends PassportStrategy(Strategy, 'jwt-refresh') {
+export class RefreshTokenStrategy extends PassportStrategy(
+  Strategy,
+  'jwt-refresh',
+) {
   constructor(
     private readonly configService: ConfigService,
     private readonly prisma: PrismaService,
@@ -15,14 +18,19 @@ export class RefreshTokenStrategy extends PassportStrategy(Strategy, 'jwt-refres
     const options: StrategyOptionsWithRequest = {
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: configService.get<string>('JWT_REFRESH_SECRET') ?? 'default_refresh_secret_2026',
+      secretOrKey:
+        configService.get<string>('JWT_REFRESH_SECRET') ??
+        'default_refresh_secret_2026',
       passReqToCallback: true,
     };
     super(options);
   }
 
   async validate(req: Request, payload: { sub: string; email: string }) {
-    console.log('RefreshTokenStrategy.validate called', { sub: payload.sub, email: payload.email });
+    console.log('RefreshTokenStrategy.validate called', {
+      sub: payload.sub,
+      email: payload.email,
+    });
 
     const authHeader = req.headers?.authorization;
     if (!authHeader) {
@@ -31,7 +39,9 @@ export class RefreshTokenStrategy extends PassportStrategy(Strategy, 'jwt-refres
 
     const refreshToken = authHeader.replace(/^Bearer\s+/i, '').trim();
     if (!refreshToken) {
-      throw new UnauthorizedException('Refresh token is empty after extraction.');
+      throw new UnauthorizedException(
+        'Refresh token is empty after extraction.',
+      );
     }
 
     const user = await this.prisma.user.findUnique({
@@ -43,10 +53,10 @@ export class RefreshTokenStrategy extends PassportStrategy(Strategy, 'jwt-refres
         refreshTokens: {
           select: {
             token: true,
-            expiresAt: true
+            expiresAt: true,
           },
           orderBy: {
-            createdAt: 'asc'
+            createdAt: 'asc',
           },
         },
       },
@@ -71,7 +81,7 @@ export class RefreshTokenStrategy extends PassportStrategy(Strategy, 'jwt-refres
     return {
       id: user.id,
       email: user.email,
-      role: user.role
+      role: user.role,
     };
   }
 }

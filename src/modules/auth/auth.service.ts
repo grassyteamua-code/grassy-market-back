@@ -9,8 +9,8 @@ import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { AuthResponseDto } from './dto/auth-response.dto';
 import * as bcrypt from 'bcrypt';
-import { randomBytes } from 'crypto';
 import { JwtService } from '@nestjs/jwt';
+import { ClientType, Role } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -25,46 +25,96 @@ export class AuthService {
     const {
       email,
       password,
-      firstname,
-      lastname
+      role,
+      clientType,
+      firstName,
+      lastName,
+      address,
+      phone,
+      companyName,
+      contactPerson,
+      companyAddress,
+      edrpou,
+      vehicleDetails,
+      locations,
     } = registerDto;
 
-    const existingUser = await this.prisma.user
-      .findUnique({ where: { email } });
-
+    const existingUser = await this.prisma.user.findUnique({
+      where: { email },
+    });
     if (existingUser) {
       throw new ConflictException('User with this email already exists');
     }
 
     try {
       const hashedPassword = await bcrypt.hash(password, this.SALT_ROUNDS);
-      const user = await this.prisma.user.create({
-        data: {
-          email,
-          password: hashedPassword,
-          firstname,
-          lastname,
-        },
-        select: {
-          id: true,
-          email: true,
-          firstname: true,
-          lastname: true,
-          role: true,
-        },
+
+      const user = await this.prisma.$transaction(async (tx) => {
+        const newUser = await tx.user.create({
+          data: {
+            email,
+            password: hashedPassword,
+            role,
+            clientType,
+          },
+        });
+
+        if (role === Role.CARRIER) {
+          await tx.carrierProfile.create({
+            data: {
+              userId: newUser.id,
+              companyName: companyName || '',
+              edrpou: edrpou || '',
+              phone: phone || '',
+              vehicleDetails: vehicleDetails || '',
+              locations: locations || '',
+            },
+          });
+        } else if (clientType === ClientType.JURIDICAL) {
+          await tx.juridicalProfile.create({
+            data: {
+              userId: newUser.id,
+              companyName: companyName || '',
+              contactPerson: contactPerson || '',
+              phone: phone || '',
+              companyAddress: companyAddress || '',
+              edrpou: edrpou || '',
+            },
+          });
+        } else {
+          await tx.naturalProfile.create({
+            data: {
+              userId: newUser.id,
+              firstName: firstName || '',
+              lastName: lastName || '',
+              phone,
+              address: address || '',
+            },
+          });
+        }
+
+        await tx.cart.create({
+          data: {
+            userId: newUser.id,
+          },
+        });
+
+        return newUser;
       });
 
-      const tokens = await this
-        .generateTokens(user.id, user.email);
+      const tokens = await this.generateTokens(user.id, user.email);
       await this.saveRefreshToken(user.id, tokens.refreshToken);
 
       return {
         ...tokens,
-        user,
+        user: {
+          id: user.id,
+          email: user.email,
+          role: user.role,
+        },
       };
     } catch (err) {
       console.error('Error during registration:', err);
-
       throw new InternalServerErrorException('Registration failed');
     }
   }
@@ -74,14 +124,6 @@ export class AuthService {
 
     const user = await this.prisma.user.findUnique({
       where: { email },
-      select: {
-        id: true,
-        email: true,
-        firstname: true,
-        lastname: true,
-        role: true,
-        password: true,
-      },
     });
 
     if (!user || !user.password) {
@@ -101,23 +143,41 @@ export class AuthService {
       user: {
         id: user.id,
         email: user.email,
-        firstname: user.firstname ?? null,
-        lastname: user.lastname ?? null,
         role: user.role,
       },
     };
   }
 
+  private async generateTokens(
+    userId: string,
+    email: string,
+  ): Promise<{ accessToken: string; refreshToken: string }> {
+    const payload = { sub: userId, email };
+    const [accessToken, refreshToken] = await Promise.all([
+      this.jwtService.signAsync(payload, { expiresIn: '15m' }),
+      this.jwtService.signAsync(payload, { expiresIn: '7d' }),
+    ]);
+
+    return { accessToken, refreshToken };
+  }
+
+  private async saveRefreshToken(
+    userId: string,
+    refreshToken: string,
+  ): Promise<void> {
+    const hashed = await bcrypt.hash(refreshToken, this.SALT_ROUNDS);
+    await this.prisma.refreshToken.create({
+      data: {
+        token: hashed,
+        userId,
+        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      },
+    });
+  }
+
   async refreshTokens(userId: string): Promise<AuthResponseDto> {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
-      select: {
-        id: true,
-        email: true,
-        firstname: true,
-        lastname: true,
-        role: true,
-      },
     });
 
     if (!user) {
@@ -129,7 +189,11 @@ export class AuthService {
 
     return {
       ...tokens,
-      user,
+      user: {
+        id: user.id,
+        email: user.email,
+        role: user.role,
+      },
     };
   }
 
@@ -137,47 +201,24 @@ export class AuthService {
     await this.prisma.refreshToken.deleteMany({ where: { userId } });
   }
 
-  private async generateTokens(userId: string, email: string): Promise<{ accessToken: string; refreshToken: string }> {
-    const payload = { sub: userId, email };
-    const refreshId = randomBytes(16).toString('hex');
-    const [accessToken, refreshToken] = await Promise.all([
-      this.jwtService
-        .signAsync(payload, { expiresIn: '15m' }),
-      this.jwtService
-        .signAsync({ ...payload, refreshId }, { expiresIn: '7d' }),
-    ]);
-
-    return { accessToken, refreshToken };
-  }
-
-  private async saveRefreshToken(userId: string, refreshToken: string): Promise<void> {
-    const hashed = await bcrypt.hash(refreshToken, this.SALT_ROUNDS);
-    await this.prisma.refreshToken.create({
-      data: {
-        token: hashed,
-        userId,
-        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+  async validateRefreshToken(
+    userId: string,
+    refreshToken: string,
+  ): Promise<boolean> {
+    const tokens = await this.prisma.refreshToken.findMany({
+      where: { userId },
+      orderBy: { createdAt: 'asc' },
+      select: {
+        token: true,
+        expiresAt: true,
       },
     });
-  }
-
-  async validateRefreshToken(userId: string, refreshToken: string): Promise<boolean> {
-    const tokens = await this.prisma.refreshToken
-      .findMany({
-        where: { userId },
-        orderBy: { createdAt: 'asc' },
-        select: {
-          token: true,
-          expiresAt: true
-        },
-      });
 
     if (!tokens || tokens.length === 0) {
       return false;
     }
 
     const last = tokens[tokens.length - 1];
-
     if (last.expiresAt && last.expiresAt < new Date()) {
       return false;
     }
