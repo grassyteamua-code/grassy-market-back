@@ -1,42 +1,19 @@
 import { Module } from '@nestjs/common';
+import { JwtModule } from '@nestjs/jwt';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
-import { PassportModule } from '@nestjs/passport';
-import { JwtModule, JwtModuleOptions } from '@nestjs/jwt';
-import { ConfigService, ConfigModule } from '@nestjs/config';
 import { JwtStrategy } from './strategies/jwt.strategy';
-import { RefreshTokenStrategy } from './strategies/refresh-token.strategy';
-import { PrismaModule } from '../../prisma/prisma.module';
-import { StringValue } from 'ms';
+import { RolesGuard } from "./guards/role.guard";
 
 @Module({
   imports: [
-    ConfigModule,
-    PrismaModule,
-    PassportModule.register({
-      defaultStrategy: 'jwt',
-    }),
-    JwtModule.registerAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService): JwtModuleOptions => {
-        const secret =
-          configService.get<string>('JWT_SECRET') ?? 'defaultsecret2026';
-        const rawExpires = configService.get<string>('JWT_EXPIRES_IN') ?? '15m';
-        const expiresIn = /^\d+$/.test(rawExpires)
-          ? Number(rawExpires)
-          : (rawExpires as StringValue);
-        return {
-          secret,
-          signOptions: {
-            expiresIn,
-          },
-        };
-      },
-    }),
+    JwtModule.register({}),
   ],
-  providers: [AuthService, JwtStrategy, RefreshTokenStrategy],
   controllers: [AuthController],
-  exports: [AuthService],
+  providers: [
+    AuthService,
+    JwtStrategy,
+    RolesGuard,
+  ],
 })
 export class AuthModule {}

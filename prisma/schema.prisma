@@ -20,58 +20,57 @@ enum ClientType {
 }
 
 model User {
-  id                String          @id @default(uuid())
-  email             String          @unique
-  password          String?
-  role              Role            @default(USER)
-  clientType        ClientType      @default(NATURAL)
-  status            String?
-  naturalProfile    NaturalProfile?
-  juridicalProfile  JuridicalProfile?
-  carrierProfile    CarrierProfile?
-  createdAt         DateTime        @default(now())
-  updatedAt         DateTime        @updatedAt
-  refreshTokens     RefreshToken[]
-  userSocials       UserSocial[]
-  auditLogs         AuditLog[]
-  resetPasswords    ResetPassword[]
-  carts             Cart[]
-  orders            Order[]
-  payments          Payment[]
+  id               String            @id @default(uuid())
+  email            String            @unique
+  password         String?
+  role             Role              @default(USER)
+  clientType       ClientType        @default(NATURAL)
+  status           String?
+  naturalProfile   NaturalProfile?
+  juridicalProfile JuridicalProfile?
+  carrierProfile   CarrierProfile?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  refreshTokens    RefreshToken[]
+  userSocials      UserSocial[]
+  auditLogs        AuditLog[]
+  resetPasswords   ResetPassword[]
+  carts            Cart[]
+  orders           Order[]
+  payments         Payment[]
 }
 
-
 model NaturalProfile {
-  id        String   @id @default(uuid())
-  firstName String   
-  lastName  String   
+  id        String  @id @default(uuid())
+  firstName String
+  lastName  String
   phone     String?
   address   String
-  userId    String   @unique
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String  @unique
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model JuridicalProfile {
-  id             String   @id @default(uuid())
+  id             String  @id @default(uuid())
   companyName    String
-  contactPerson  String   
+  contactPerson  String
   phone          String
   companyAddress String
-  edrpou         String   @unique
-  urlDocEdr      String?  
-  userId         String   @unique
-  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  edrpou         String  @unique
+  urlDocEdr      String?
+  userId         String  @unique
+  user           User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model CarrierProfile {
-  id             String   @id @default(uuid())
-  companyName    String   
-  edrpou         String   @unique 
-  phone          String   
-  vehicleDetails String   
-  locations      String   
-  userId         String   @unique
-  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id             String @id @default(uuid())
+  companyName    String
+  edrpou         String @unique
+  phone          String
+  vehicleDetails String
+  locations      String
+  userId         String @unique
+  user           User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model RefreshToken {

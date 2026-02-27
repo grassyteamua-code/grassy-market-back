@@ -1,18 +1,19 @@
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
   HttpStatus,
-  Post,
+  Post, UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { RefreshTokenStrategy } from './strategies/refresh-token.strategy';
-import { GetUser } from '../../common/decorators/get-user.decorator';
-import { JwtAuthGuard } from './guards/jwt-auth.guard';
-import { LoginDto } from './dto/login.dto';
-import { RegisterDto } from './dto/register.dto';
-import { AuthResponseDto } from './dto/auth-response.dto';
+import { Roles, RolesGuard } from "./guards/role.guard";
+import { AuthService } from "./auth.service";
+import { RegisterDto } from "./dto/register.dto";
+import { JwtAuthGuard } from "./guards/auth.guard";
+import {RefreshDto} from "./dto/refresh.dto";
+import {LoginDto} from "./dto/login.dto";
+import { AuthResponseDto } from "./dto/auth-response.dto";
 
 @Controller('auth')
 export class AuthController {
@@ -23,21 +24,39 @@ export class AuthController {
   async register(@Body() registerDto: RegisterDto): Promise<AuthResponseDto> {
     return this.authService.register(registerDto);
   }
-  @Post('refresh-tokens')
-  @UseGuards(RefreshTokenStrategy)
-  async refresh(@GetUser('id') userId: string): Promise<AuthResponseDto> {
-    return await this.authService.refreshTokens(userId);
+  @Post('logout')
+  async logout(@Body() dto: RefreshDto) {
+    await this.prisma.refreshToken.deleteMany({
+      where: { token: dto.refreshToken },
+    });
+
+    return { message: 'Logged out' };
   }
 
-  @Post('logout')
-  @UseGuards(JwtAuthGuard)
-  async logout(@GetUser('id') userId: string): Promise<{ message: string }> {
-    await this.authService.logout(userId);
-    return { message: 'Successfully logged out.' };
+  @Post('refresh')
+  async refresh(@Body() dto: RefreshDto) {
+    const tokenInDb = await this.prisma.refreshToken.findFirst({
+      where: { token: dto.refreshToken },
+    });
+
+    if (!tokenInDb) throw new UnauthorizedException();
+
+    const payload = this.jwtService.verify(dto.refreshToken, {
+      secret: process.env.JWT_REFRESH_SECRET,
+    });
+
+    return this.generateTokens(payload);
   }
 
   @Post('login')
   async login(@Body() loginDto: LoginDto): Promise<AuthResponseDto> {
     return await this.authService.login(loginDto);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.SELLER)
+  @Get('seller-only')
+  getSellerData() {
+    return 'Only sellers';
   }
 }
