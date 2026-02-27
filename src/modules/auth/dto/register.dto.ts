@@ -1,31 +1,42 @@
 import {
   IsEmail,
-  IsNotEmpty,
-  IsOptional,
   IsString,
-  Matches,
-  MinLength
+  MinLength,
+  IsEnum,
+  IsOptional,
+  IsNotEmpty,
 } from 'class-validator';
+import { Role, ClientType } from '@prisma/client';
 
 export class RegisterDto {
-  @IsEmail({}, { message: 'Please, provide a valid email address' })
-  @IsNotEmpty({ message: 'Email address is required' })
+  @IsEmail()
+  @IsNotEmpty({ message: 'Email cannot be empty' })
   email: string;
 
   @IsString()
-  @IsNotEmpty({ message: 'Password is required' })
-  @MinLength(8, { message: 'Password must be at least 8 characters long' })
-  @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/, {
-    message: 'Пароль повинен містити як мінімум одну літеру верхнього регістру, одну літеру ' +
-      'нижнього регістру, одну цифру та один спеціальний символ'
-  })
+  @IsNotEmpty({ message: 'Password cannot be empty' })
+  @MinLength(8)
   password: string;
 
-  @IsOptional()
-  @IsString()
-  firstname?: string;
+  @IsEnum(Role)
+  role: Role;
 
-  @IsOptional()
-  @IsString()
-  lastname?: string;
+  @IsEnum(ClientType)
+  clientType: ClientType;
+
+  // Фізична особа
+  @IsOptional() @IsString() firstName?: string;
+  @IsOptional() @IsString() lastName?: string;
+  @IsOptional() @IsString() address?: string;
+
+  // Юридична особа
+  @IsOptional() @IsString() companyName?: string;
+  @IsOptional() @IsString() contactPerson?: string;
+  @IsOptional() @IsString() companyAddress?: string;
+  @IsOptional() @IsString() edrpou?: string;
+
+  // Спільне та Перевізник
+  @IsOptional() @IsString() phone?: string;
+  @IsOptional() @IsString() vehicleDetails?: string;
+  @IsOptional() @IsString() locations?: string;
 }

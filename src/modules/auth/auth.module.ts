@@ -7,6 +7,7 @@ import { ConfigService, ConfigModule } from '@nestjs/config';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { RefreshTokenStrategy } from './strategies/refresh-token.strategy';
 import { PrismaModule } from '../../prisma/prisma.module';
+import { StringValue } from 'ms';
 
 @Module({
   imports: [
@@ -18,21 +19,23 @@ import { PrismaModule } from '../../prisma/prisma.module';
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: async (configService: ConfigService): Promise<JwtModuleOptions> => {
-        const secret = configService.get<string>('JWT_SECRET') ?? 'defaultsecret2026';
+      useFactory: (configService: ConfigService): JwtModuleOptions => {
+        const secret =
+          configService.get<string>('JWT_SECRET') ?? 'defaultsecret2026';
         const rawExpires = configService.get<string>('JWT_EXPIRES_IN') ?? '15m';
-        const expiresIn: number | string = /^\d+$/.test(rawExpires) ? Number(rawExpires) : rawExpires;
+        const expiresIn = /^\d+$/.test(rawExpires)
+          ? Number(rawExpires)
+          : (rawExpires as StringValue);
         return {
-          secret
+          secret,
+          signOptions: {
+            expiresIn,
+          },
         };
       },
     }),
   ],
-  providers: [
-    AuthService,
-    JwtStrategy,
-    RefreshTokenStrategy,
-  ],
+  providers: [AuthService, JwtStrategy, RefreshTokenStrategy],
   controllers: [AuthController],
   exports: [AuthService],
 })
