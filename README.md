@@ -12,7 +12,6 @@
 ### 🌐 Основний стек
 
 - **Nest.js 11.1.14** — [nextjs.org/docs]((https://docs.nestjs.com/))
-- **React 19** — [prisma.io/docs]((https://www.prisma.io/docs))
 - **TypeScript** —
   [www.typescriptlang.org/docs](https://www.typescriptlang.org/docs/)
-- **PostgreSQL** - [www.postgresql.org/docs/current/index.html](https://www.postgresql.org/docs/current/index.html)
+- **PostgreSQL 18.3** - [www.postgresql.org/docs/current/index.html](https://www.postgresql.org/docs/current/index.html)
