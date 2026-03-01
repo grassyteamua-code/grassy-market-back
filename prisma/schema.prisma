@@ -16,6 +16,9 @@ enum Role {
 model Seller {
   id              String          @id @default(uuid())
   email           String
+  firstName       String
+  middleName      String
+  lastName        String
   password        String
   companyName     String
   contactPerson   String
@@ -36,6 +39,9 @@ model Seller {
 model BuyerJuridicalPerson {
   id              String          @id @default(uuid())
   email           String
+  firstName       String
+  middleName      String
+  lastName        String
   password        String
   companyName     String
   contactPerson   String
@@ -76,6 +82,9 @@ model Carrier {
   id              String          @id @default(uuid())
   email           String
   password        String
+  firstName       String
+  middleName      String
+  lastName        String
   companyName     String
   edrpou          String          @unique
   phone           String
