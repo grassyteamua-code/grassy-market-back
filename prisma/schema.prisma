@@ -24,7 +24,7 @@ model Seller {
   contactPerson   String
   phone           String
   companyAddress  String
-  edrpou          String          @unique
+  edrpou          Int          
   verificationDoc String
   acceptTerms     Boolean         @default(false)
   refreshTokens   RefreshToken[]
@@ -47,7 +47,7 @@ model BuyerJuridicalPerson {
   contactPerson   String
   phone           String
   companyAddress  String
-  edrpou          String          @unique
+  edrpou          Int         
   verificationDoc String
   acceptTerms     Boolean         @default(false)
   refreshTokens   RefreshToken[]
@@ -86,7 +86,7 @@ model Carrier {
   middleName      String
   lastName        String
   companyName     String
-  edrpou          String          @unique
+  edrpou          Int
   phone           String
   vehicleDetails  String
   location        String
@@ -214,7 +214,7 @@ model Order {
   carrierId              String
   carrier                Carrier              @relation(fields: [carrierId], references: [id], onDelete: Cascade)
   cartId                 String
-  cart                   Cart        @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  cart                   Cart                 @relation(fields: [cartId], references: [id], onDelete: Cascade)
 }
 
 model Cart {

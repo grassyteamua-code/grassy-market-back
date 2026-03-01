@@ -1,4 +1,4 @@
-export class RegisterJuridicalPersonDto {
+export class RegisterSellerDto {
   email: string | undefined;
   firstName: string | undefined;
   middleName: string | undefined;
@@ -8,7 +8,7 @@ export class RegisterJuridicalPersonDto {
   contactPerson: string | undefined;
   phone: string | undefined;
   companyAddress: string | undefined;
-  edrpou: number | undefined;
+  edrpou: string | undefined;
   verificationDoc: string | undefined;
   acceptTerms: boolean | undefined;
 }
