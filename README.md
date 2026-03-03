@@ -1,7 +1,7 @@
 # 🌿 Grassy Market — Backend
 
 Це бекенд-частина платформи **Grassy Market**, розроблена на базі **Nest.js**.
-Проєкт інтегрований з Next.js фронтендом через REST API та використовує сучасні
+Проєкт інтегрований з **Next.js** фронтенд-частиною через REST API та використовує сучасні
 підходи до архітектури та безпеки.
 
 ## Використані технології
@@ -49,22 +49,22 @@
 │             └─ user.entity.ts               #     опис сутності користувача 
 │          ├─ user.contoller.spec.ts          #     тести для контролера
 │          ├─ user.contoller.ts               #     контролер для роботи з користувачами (CRUD)
-│          ├─ user.module.ts                  #     модуль NestJS для користувачів
+│          ├─ user.module.ts                  #     модуль Nest.js для користувачів
 │          ├─ user.service.spec.ts            #     тести для сервісу
 │          └─ user.service.ts                 #     бізнес-логіка для користувачів
 │      ├─ app.controller.spec.ts              #     тести для головний контролер застосунку
 │      ├─ app.controller.ts                   #     головний контролер застосунку
 │      ├─ app.module.ts                       #     головний модуль застосунку, який збирає всі інші модулі
-│      ├─ app.service.ts
-│      └─ main.ts 
-│   ├─ test/
-│      ├─ app.e2e-spec.ts
-│      └─ jest-e2e.json
-│   ├─ .env
-│   ├─ .gitingnore
-│   ├─ .prettier
-│   ├─ .docker-compose.yml
-│   ├─ eslint.config.mjs
+│      ├─ app.service.ts                      #     сервіс із базовою логікою застосунку
+│      └─ main.ts                             #     точка входу, де запускається NestJS сервер 
+│   ├─ test/                                  #     містить усі тести, що покривають застосунок
+│      ├─ app.e2e-spec.ts                     #     end-to-end тести               
+│      └─ jest-e2e.json                       #     конфігурація Jest для end-to-end тести
+│   ├─ .env                                   #     змінні середовища (секрети, ключі, URL бази даних)
+│   ├─ .gitingnore                            #     файли, які не потрапляють у Git
+│   ├─ .prettier                              #     налаштування форматування коду
+│   ├─ .docker-compose.yml                    #     конфігурація Docker для запуску сервісів
+│   ├─ eslint.config.mjs                      #     правила ESLint для перевірки коду
 │   ├─ Makefile
 │   ├─ README.md
 │   ├─ nest-cli.json
