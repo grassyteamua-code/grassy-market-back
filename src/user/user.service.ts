@@ -13,7 +13,9 @@ export class UserService {
 
   async create(createUserDto: CreateUserDto) {
     if (!createUserDto.password || typeof createUserDto.password !== 'string') {
-      throw new BadRequestException('Password is required and must be a string');
+      throw new BadRequestException(
+        "Пароль є обов'язковим і повинен вводитися як строка.",
+      );
     }
 
     const hashedPassword = this.hashPassword(createUserDto.password);
@@ -31,6 +33,7 @@ export class UserService {
           'Виникла помилка під час реєстрації нового користувача',
         );
       });
+
     delete newUser.password;
 
     return newUser;
@@ -87,10 +90,10 @@ export class UserService {
     }
   }
 
-  async findByPhone(phone: string) {
+  async findByPhone(email: string) {
     try {
       const foundedUser = await this.prismaService.user.findUnique({
-        where: { phone },
+        where: { email },
       });
 
       if (!foundedUser) {
@@ -101,7 +104,10 @@ export class UserService {
 
       return userWithoutPassword;
     } catch (error) {
-      throw new NotFoundException('Користувач був знайдений за номером телефону.');
+      console.error(error);
+      throw new NotFoundException(
+        'Користувач був знайдений за електронною поштою.',
+      );
     }
   }
 

@@ -21,6 +21,7 @@ model User {
   firstName        String          @map("first_name")
   middleName       String          @map("middle_name")
   lastName         String          @map("last_name")
+  mobilephone      String
   role             Role[]          @default([SELLER])
   status           String
   buyerProfile     BayerProfile?
