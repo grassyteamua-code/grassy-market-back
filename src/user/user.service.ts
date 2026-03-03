@@ -39,7 +39,9 @@ export class UserService {
 
       this.logger.error(errorMessage);
 
-      throw new BadRequestException('Користувач з таким нікнеймом вже існує.');
+      throw new BadRequestException(
+        `Користувач з таким нікнеймом "${createUserDto.username}" вже існує.`,
+      );
     }
 
     const existingUserByEmail = await this.findByEmail(createUserDto.email);
@@ -50,7 +52,7 @@ export class UserService {
       this.logger.error(errorMessage);
 
       throw new BadRequestException(
-        'Користувач з такою електронною скринькою вже існує.',
+        `Користувач з такою електронною скринькою "${createUserDto.email}" вже існує.`,
       );
     }
 
