@@ -8,6 +8,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 exports.__esModule = true;
 exports.RegisterDto = void 0;
 var class_validator_1 = require("class-validator");
+var match_password_constrains_1 = require("src/decorators/match-password.constrains");
 var RegisterDto = /** @class */ (function () {
     function RegisterDto() {
     }
@@ -33,7 +34,8 @@ var RegisterDto = /** @class */ (function () {
         }),
         class_validator_1.MinLength(8, {
             message: 'Довжина пароля повинна бути щонаймешне вісім символів'
-        })
+        }),
+        class_validator_1.Validate(match_password_constrains_1.MatchPasswordConstraint)
     ], RegisterDto.prototype, "repeatPassword");
     __decorate([
         class_validator_1.IsString({

@@ -4,7 +4,9 @@ import {
   MinLength,
   Length,
   IsStrongPassword,
+  Validate,
 } from 'class-validator';
+import { MatchPasswordConstraint } from 'src/decorators/match-password.constrains';
 
 export class RegisterDto {
   @IsEmail(
@@ -39,6 +41,7 @@ export class RegisterDto {
   @MinLength(8, {
     message: 'Довжина пароля повинна бути щонаймешне вісім символів',
   })
+  @Validate(MatchPasswordConstraint)
   repeatPassword!: string;
 
   @IsString({
