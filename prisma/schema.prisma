@@ -34,8 +34,6 @@ model User {
 
 model SellerProfile {
   id              String  @id @default(uuid())
-  email           String
-  password        String
   companyName     String
   contactPerson   String
   phone           String
