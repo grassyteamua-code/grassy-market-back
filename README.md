@@ -24,6 +24,17 @@
 │      └── seed.js
 │   ├─ src/
 │      ├─ auth/
+│         ├─ dto/
+│            ├─ register/
+│               └─ register.dto.ts
+│            ├─ create-auth.dto.ts
+│            └─ update-auth.dto.ts
+│         ├─ entities/
+│         ├─ auth.contoller.spec.ts/
+│         ├─ auth.contoller.ts/
+│         ├─ auth.module.ts/
+│         ├─ auth.service.spec.ts/
+│         ├─ auth.service.ts/
 │      ├─ config/
 │      ├─ decorators/
 │      ├─ prisma/
@@ -45,7 +56,7 @@
 │   ├─ .prettier
 │   ├─ package-lock.json
 │   ├─ package.json
-│   ├─ prisma.config.ts/
+│   ├─ prisma.config.ts
 │   ├─ swagger.yaml
 │   ├─ tsconfig.build.json
 │   ├─ tsconfig.json
