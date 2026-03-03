@@ -11,9 +11,11 @@
 
 - **Nest.js** — [https://www.nextjs.org/docs](https://docs.nestjs.com/)
 - **TypeScript** — [https://www.typescriptlang.org/docs](https://www.typescriptlang.org/docs/)
+- Робота з базою даних
 - **PostgreSQL** — [https://www.postgresql.org/docs/current/index.html](https://www.postgresql.org/docs/current/index.html)
-- **Docker Compose** - [https://www.docker.com/products/docker-desktop](https://www.docker.com/products/docker-desktop/)
 - **Neon Serverless Postgres** - [https://neon.com/](https://neon.com/)
+- 
+- - **Docker** - [https://www.docker.com/products/docker-desktop](https://www.docker.com/products/docker-desktop/)
 -- Тестування
 - **Jest** - [https://jestjs.io/uk/](https://jestjs.io/uk/)
 - 
