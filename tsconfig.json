@@ -13,6 +13,7 @@
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
     "outDir": "./dist",
+    "rootDir": "./src",
     "baseUrl": "./",
     "incremental": true,
     "skipLibCheck": true,
@@ -22,6 +23,16 @@
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "noFallthroughCasesInSwitch": false,
-    "target": "ES2022"
-  }
+    "target": "ES2022",
+    "paths": {
+      "@prisma": ["src/prisma"],
+      "@prisma/*": ["src/prisma/*"],
+      "@auth": ["src/auth"],
+      "@auth/*": ["src/auth/*"],
+      "@config": ["config"],
+      "@config/*": ["config/*"]
+    }
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"]
 }

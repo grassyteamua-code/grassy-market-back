@@ -1,16 +1,18 @@
 -- CreateEnum
-CREATE TYPE "Role" AS ENUM ('USER', 'SELLER', 'DRIVER', 'CONTROLLER');
+CREATE TYPE "Role" AS ENUM ('SELLER', 'BUYER', 'CARRIER');
 
 -- CreateTable
 CREATE TABLE "User" (
     "id" TEXT NOT NULL,
-    "username" TEXT,
-    "firstname" TEXT,
-    "lastname" TEXT,
+    "username" TEXT NOT NULL,
     "email" TEXT NOT NULL,
-    "password" TEXT,
-    "role" "Role" NOT NULL DEFAULT 'USER',
-    "status" TEXT,
+    "password" TEXT NOT NULL,
+    "passwordRepeat" TEXT NOT NULL,
+    "firstName" TEXT NOT NULL,
+    "middleName" TEXT NOT NULL,
+    "lastName" TEXT NOT NULL,
+    "role" "Role"[] DEFAULT ARRAY['SELLER']::"Role"[],
+    "status" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -18,16 +20,47 @@ CREATE TABLE "User" (
 );
 
 -- CreateTable
-CREATE TABLE "UserProfile" (
+CREATE TABLE "SellerProfile" (
     "id" TEXT NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "fullname" TEXT,
-    "phone" TEXT,
-    "photoUrl" TEXT,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "companyName" TEXT NOT NULL,
+    "contactPerson" TEXT NOT NULL,
+    "phone" TEXT NOT NULL,
+    "companyAddress" TEXT NOT NULL,
+    "edrpou" TEXT NOT NULL,
+    "verificationDoc" TEXT NOT NULL,
+    "acceptTerms" BOOLEAN NOT NULL DEFAULT false,
     "userId" TEXT NOT NULL,
 
-    CONSTRAINT "UserProfile_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "SellerProfile_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "BayerProfile" (
+    "id" TEXT NOT NULL,
+    "companyName" TEXT NOT NULL,
+    "contactPerson" TEXT NOT NULL,
+    "phone" TEXT NOT NULL,
+    "companyAddress" TEXT NOT NULL,
+    "edrpou" TEXT NOT NULL,
+    "urlDocEdr" TEXT,
+    "acceptTerms" BOOLEAN NOT NULL DEFAULT false,
+    "userId" TEXT NOT NULL,
+
+    CONSTRAINT "BayerProfile_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "CarrierProfile" (
+    "id" TEXT NOT NULL,
+    "companyName" TEXT NOT NULL,
+    "edrpou" TEXT NOT NULL,
+    "phone" TEXT NOT NULL,
+    "vehicleDetails" TEXT NOT NULL,
+    "locations" TEXT NOT NULL,
+    "acceptTerms" BOOLEAN NOT NULL DEFAULT false,
+    "userId" TEXT NOT NULL,
+
+    CONSTRAINT "CarrierProfile_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -85,7 +118,7 @@ CREATE TABLE "Product" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "description" TEXT,
-    "price" DOUBLE PRECISION NOT NULL,
+    "price" DECIMAL(65,30) NOT NULL,
     "stock" INTEGER NOT NULL,
     "sku" TEXT NOT NULL,
     "isActive" BOOLEAN NOT NULL DEFAULT true,
@@ -103,7 +136,7 @@ CREATE TABLE "Category" (
     "name" TEXT NOT NULL,
     "description" TEXT,
     "status" TEXT,
-    "slug" TEXT,
+    "slug" TEXT NOT NULL,
     "imageUrl" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -116,7 +149,7 @@ CREATE TABLE "Order" (
     "id" TEXT NOT NULL,
     "orderNumber" TEXT NOT NULL,
     "status" TEXT,
-    "totalAmount" DOUBLE PRECISION NOT NULL,
+    "totalAmount" DECIMAL(65,30) NOT NULL,
     "userId" TEXT NOT NULL,
     "cartId" TEXT NOT NULL,
     "shippingAddress" TEXT,
@@ -153,7 +186,7 @@ CREATE TABLE "CartItem" (
 CREATE TABLE "OrderItem" (
     "id" TEXT NOT NULL,
     "quantity" INTEGER NOT NULL,
-    "price" DOUBLE PRECISION NOT NULL,
+    "price" DECIMAL(65,30) NOT NULL,
     "orderId" TEXT NOT NULL,
     "productId" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -165,7 +198,7 @@ CREATE TABLE "OrderItem" (
 -- CreateTable
 CREATE TABLE "Payment" (
     "id" TEXT NOT NULL,
-    "amount" DOUBLE PRECISION NOT NULL,
+    "amount" DECIMAL(65,30) NOT NULL,
     "status" TEXT,
     "currency" TEXT NOT NULL DEFAULT 'UAH',
     "paymentMethod" TEXT,
@@ -182,13 +215,43 @@ CREATE TABLE "Payment" (
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "SellerProfile_edrpou_key" ON "SellerProfile"("edrpou");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "SellerProfile_userId_key" ON "SellerProfile"("userId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "BayerProfile_edrpou_key" ON "BayerProfile"("edrpou");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "BayerProfile_userId_key" ON "BayerProfile"("userId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "CarrierProfile_edrpou_key" ON "CarrierProfile"("edrpou");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "CarrierProfile_userId_key" ON "CarrierProfile"("userId");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "Product_sku_key" ON "Product"("sku");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Category_slug_key" ON "Category"("slug");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Order_orderNumber_key" ON "Order"("orderNumber");
 
+-- CreateIndex
+CREATE UNIQUE INDEX "Cart_userId_key" ON "Cart"("userId");
+
 -- AddForeignKey
-ALTER TABLE "UserProfile" ADD CONSTRAINT "UserProfile_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "SellerProfile" ADD CONSTRAINT "SellerProfile_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "BayerProfile" ADD CONSTRAINT "BayerProfile_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "CarrierProfile" ADD CONSTRAINT "CarrierProfile_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "RefreshToken" ADD CONSTRAINT "RefreshToken_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;

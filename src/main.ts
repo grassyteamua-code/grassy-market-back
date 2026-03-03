@@ -2,7 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 
 const options = {
-  origin: process.env.CORS_ORIGIN ?? '*',
+  origin: ['http://localhost:5173'],
   method: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: [
     'Origin',
@@ -21,6 +21,6 @@ async function bootstrap() {
   app.enableCors(options);
   app.setGlobalPrefix('api');
 
-  await app.listen(process.env.PORT ?? 3000);
+  await app.listen(3000);
 }
-bootstrap().catch((err) => console.error(err));
+bootstrap().catch((error) => console.error(error));

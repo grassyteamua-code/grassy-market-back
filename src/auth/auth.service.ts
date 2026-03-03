@@ -1,20 +1,26 @@
-import {ConflictException, Injectable} from '@nestjs/common';
-import { CreateUserDto } from './dto/create-auth.dto';
-import { UserService } from "../user/user.service";
+import { Injectable } from '@nestjs/common';
+import { CreateAuthDto } from './dto/create-auth.dto';
+import { UpdateAuthDto } from './dto/update-auth.dto';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly userService: UserService) {}
+  create(createAuthDto: CreateAuthDto) {
+    return 'This action adds a new auth';
+  }
 
-  registerUser(createUserDto: CreateUserDto) {
-    const user = this.userService.findByEmail(createUserDto.email);
+  findAll() {
+    return `This action returns all auth`;
+  }
 
-    if (!user) {
-      return this.userService.create(createUserDto);
-    } else {
-      throw new ConflictException(
-          'Користувач уже присутній у системі.'
-      );
-    }
+  findOne(id: number) {
+    return `This action returns a #${id} auth`;
+  }
+
+  update(id: number, updateAuthDto: UpdateAuthDto) {
+    return `This action updates a #${id} auth`;
+  }
+
+  remove(id: number) {
+    return `This action removes a #${id} auth`;
   }
 }
