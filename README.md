@@ -21,7 +21,7 @@
 │   ├─ prisma/
 │      ├─ migrations/
 │      ├─ schema.prisma
-│      └── seed.js
+│      └─ seed.js
 │   ├─ src/
 │      ├─ auth/
 │         ├─ dto/
