@@ -15,7 +15,8 @@
 - **PostgreSQL ver. 18.3** — [https://www.postgresql.org/docs/current/index.html](https://www.postgresql.org/docs/current/index.html)
 - **Docker ver. 29.2.1** - [https://www.docker.com/products/docker-desktop](https://www.docker.com/products/docker-desktop/)
 
-## Структрура бекенд-частини проєкту
+## Структура бекенд-частини проєкту
+```
 ├── node_modules/                       
 │   ├─ prisma/
 │      ├─ migrations/
@@ -40,3 +41,4 @@
 │   ├─ eslint.config.mjs/
 │   ├─ nest-cli.json/
 │   ├─ .prettier/
+```
