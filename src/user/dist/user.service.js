@@ -95,7 +95,6 @@ var UserService = /** @class */ (function () {
                             return foundedUser;
                         })["catch"](function (error) {
                             throw new common_1.NotFoundException('Користувач був знайдений за нікнеймом.');
-                            ;
                         })];
                     case 1: return [2 /*return*/, _a.sent()];
                 }
