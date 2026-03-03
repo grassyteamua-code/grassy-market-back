@@ -27,6 +27,9 @@ var UserService = /** @class */ (function () {
         if (!foundedUser) {
             return null;
         }
+        try { }
+        catch (error) {
+        }
     };
     UserService.prototype.update = function (id, updateUserDto) {
         return "This action updates a #" + id + " user";
