@@ -17,6 +17,11 @@ export class AuthController {
     );
     console.log("Existing user by username:", existingUserByUsername);
     
+    const existingUserByUsername: User = this.userService.findByEmail(
+      registerDto.email
+    );
+    console.log("Existing user by username:", existingUserByEmail);
+
     return this.authService.register(registerDto);
   }
 

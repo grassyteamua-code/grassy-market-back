@@ -48,11 +48,11 @@ var UserController = /** @class */ (function () {
         __param(0, common_1.Param('id'))
     ], UserController.prototype, "findOne");
     __decorate([
-        common_1.Get('find-one/:id'),
+        common_1.Get('find-by-username/:username'),
         __param(0, common_1.Param('id'))
     ], UserController.prototype, "findByUsername");
     __decorate([
-        common_1.Get('find-one/:id'),
+        common_1.Get('find-by-email/:email'),
         __param(0, common_1.Param('id'))
     ], UserController.prototype, "findByEmail");
     __decorate([

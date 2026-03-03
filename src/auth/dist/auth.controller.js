@@ -19,6 +19,8 @@ var AuthController = /** @class */ (function () {
     AuthController.prototype.register = function (registerDto) {
         var existingUserByUsername = this.userService.findByUsername(registerDto.username);
         console.log("Existing user by username:", existingUserByUsername);
+        var existingUserByUsername = this.userService.findByEmail(registerDto.email);
+        console.log("Existing user by username:", existingUserByEmail);
         return this.authService.register(registerDto);
     };
     AuthController.prototype.login = function () {
