@@ -14,9 +14,8 @@
 - Робота з базою даних
 - **PostgreSQL** — [https://www.postgresql.org/docs/current/index.html](https://www.postgresql.org/docs/current/index.html)
 - **Neon Serverless Postgres** - [https://neon.com/](https://neon.com/)
-- 
   - **Docker** - [https://www.docker.com/products/docker-desktop](https://www.docker.com/products/docker-desktop/)
--- Тестування
+- Тестування
 - **Jest** - [https://jestjs.io/uk/](https://jestjs.io/uk/)
 - 
 ## Структура бекенд-частини проєкту
