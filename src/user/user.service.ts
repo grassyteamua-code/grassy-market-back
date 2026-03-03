@@ -1,11 +1,35 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { PrismaService } from '../prisma/prisma.service';
+import { hashSync, genSaltSync } from 'bcrypt';
 
 @Injectable()
 export class UserService {
+  constructor(private readonly prismaService: PrismaService) {}
+
   create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
+    const hashadPassword = this.hashPassword(registerDto.password);
+
+    const userData = { ...registerDto, password: hashedPassword };
+
+    delete userData.repeatPassword;
+
+    const newUser = await this.prismaService.user
+      .create({
+        data: userData,
+      })
+      .catch((error) => {
+        throw new BadRequestException(
+          'Виникла помилка під час реєстрації нового користувача',
+        );
+      });
+    delete newUser.password;
+
+    return newUser;
+  }
+
+  private hashPassword(password: string): string {
+    return hashSync(password, genSaltSync(10));
   }
 
   findAll() {
@@ -17,63 +41,60 @@ export class UserService {
   }
 
   async findByUsername(username: string) {
-    return await this.prismaService.user
-      .findUnique({
-        where: { user },
-      })
-      .then((foundedUser) => {
-        if (!foundedUser) {
-          return null;
-        }
+    try {
+      const foundedUser = await this.prismaService.user.findFirst({
+        where: { username },
+      });
 
-        delete foundedUser.password;
+      if (!foundedUser) {
+        return null;
+      }
 
-        return foundedUser;
-      })
-      .catch((error) => {
-        throw new NotFoundException('Користувач був знайдений за нікнеймом.');;
-      }); 
+      const { password, ...userWithoutPassword } = foundedUser;
+
+      return userWithoutPassword;
+    } catch {
+      throw new NotFoundException('Користувач був знайдений за нікнеймом.');
+    }
   }
 
   async findByEmail(email: string) {
-    return await this.prismaService.user
-      .findUnique({
+    try {
+      const foundedUser = await this.prismaService.user.findUnique({
         where: { email },
-      })
-      .then((foundedUser) => {
-        if (!foundedUser) {
-          return null;
-        }
-
-        delete foundedUser.password;
-
-        return foundedUser;
-      })
-      .catch((error) => {
-        throw new NotFoundException('Користувач був знайдений за нікнеймом.');
       });
+
+      if (!foundedUser) {
+        return null;
+      }
+
+      const { password, ...userWithoutPassword } = foundedUser;
+
+      return userWithoutPassword;
+    } catch (error) {
+      throw new NotFoundException('Користувач був знайдений за нікнеймом.');
+    }
   }
-  
+
   async findByPhone(email: string) {
-    return await this.prismaService.user
-      .findUnique({
+    try {
+      const foundedUser = await this.prismaService.user.findUnique({
         where: { email },
-      })
-      .then((foundedUser) => {
-        if (!foundedUser) {
-          return null;
-        }
-
-        delete foundedUser.password;
-
-        return foundedUser;
-      })
-      .catch((error) => {
-        throw new NotFoundException('Користувач був знайдений за нікнеймом.');;
       });
+
+      if (!foundedUser) {
+        return null;
+      }
+
+      const { password, ...userWithoutPassword } = foundedUser;
+
+      return userWithoutPassword;
+    } catch (error) {
+      throw new NotFoundException('Користувач був знайдений за нікнеймом.');
+    }
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
+  update(id: number) {
     return `This action updates a #${id} user`;
   }
 

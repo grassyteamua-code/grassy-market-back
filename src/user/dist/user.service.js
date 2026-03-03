@@ -1,4 +1,15 @@
 "use strict";
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -41,14 +52,40 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
 exports.__esModule = true;
 exports.UserService = void 0;
 var common_1 = require("@nestjs/common");
+var bcrypt_1 = require("bcrypt");
 var UserService = /** @class */ (function () {
-    function UserService() {
+    function UserService(prismaService) {
+        this.prismaService = prismaService;
     }
     UserService.prototype.create = function (createUserDto) {
-        return 'This action adds a new user';
+        var hashadPassword = this.hashPassword(registerDto.password);
+        var userData = __assign(__assign({}, registerDto), { password: hashedPassword });
+        delete userData.repeatPassword;
+        var newUser = yield this.prismaService.user
+            .create({
+            data: userData
+        })["catch"](function (error) {
+            throw new BadRequestException('Виникла помилка під час реєстрації нового користувача');
+        });
+        delete newUser.password;
+        return newUser;
+    };
+    UserService.prototype.hashPassword = function (password) {
+        return bcrypt_1.hashSync(password, bcrypt_1.genSaltSync(10));
     };
     UserService.prototype.findAll = function () {
         return "This action returns all user";
@@ -58,73 +95,80 @@ var UserService = /** @class */ (function () {
     };
     UserService.prototype.findByUsername = function (username) {
         return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.prismaService.user
-                            .findUnique({
-                            where: { user: user }
-                        })
-                            .then(function (foundedUser) {
-                            if (!foundedUser) {
-                                return null;
-                            }
-                            delete foundedUser.password;
-                            return foundedUser;
-                        })["catch"](function (error) {
-                            throw new common_1.NotFoundException('Користувач був знайдений за нікнеймом.');
-                            ;
-                        })];
-                    case 1: return [2 /*return*/, _a.sent()];
+            var foundedUser, password, userWithoutPassword, _a;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        _b.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, this.prismaService.user.findFirst({
+                                where: { username: username }
+                            })];
+                    case 1:
+                        foundedUser = _b.sent();
+                        if (!foundedUser) {
+                            return [2 /*return*/, null];
+                        }
+                        password = foundedUser.password, userWithoutPassword = __rest(foundedUser, ["password"]);
+                        return [2 /*return*/, userWithoutPassword];
+                    case 2:
+                        _a = _b.sent();
+                        throw new common_1.NotFoundException('Користувач був знайдений за нікнеймом.');
+                    case 3: return [2 /*return*/];
                 }
             });
         });
     };
     UserService.prototype.findByEmail = function (email) {
         return __awaiter(this, void 0, void 0, function () {
+            var foundedUser, password, userWithoutPassword, error_1;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.prismaService.user
-                            .findUnique({
-                            where: { email: email }
-                        })
-                            .then(function (foundedUser) {
-                            if (!foundedUser) {
-                                return null;
-                            }
-                            delete foundedUser.password;
-                            return foundedUser;
-                        })["catch"](function (error) {
-                            throw new common_1.NotFoundException('Користувач був знайдений за нікнеймом.');
-                        })];
-                    case 1: return [2 /*return*/, _a.sent()];
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, this.prismaService.user.findUnique({
+                                where: { email: email }
+                            })];
+                    case 1:
+                        foundedUser = _a.sent();
+                        if (!foundedUser) {
+                            return [2 /*return*/, null];
+                        }
+                        password = foundedUser.password, userWithoutPassword = __rest(foundedUser, ["password"]);
+                        return [2 /*return*/, userWithoutPassword];
+                    case 2:
+                        error_1 = _a.sent();
+                        throw new common_1.NotFoundException('Користувач був знайдений за нікнеймом.');
+                    case 3: return [2 /*return*/];
                 }
             });
         });
     };
     UserService.prototype.findByPhone = function (email) {
         return __awaiter(this, void 0, void 0, function () {
+            var foundedUser, password, userWithoutPassword, error_2;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.prismaService.user
-                            .findUnique({
-                            where: { email: email }
-                        })
-                            .then(function (foundedUser) {
-                            if (!foundedUser) {
-                                return null;
-                            }
-                            delete foundedUser.password;
-                            return foundedUser;
-                        })["catch"](function (error) {
-                            throw new common_1.NotFoundException('Користувач був знайдений за нікнеймом.');
-                            ;
-                        })];
-                    case 1: return [2 /*return*/, _a.sent()];
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, this.prismaService.user.findUnique({
+                                where: { email: email }
+                            })];
+                    case 1:
+                        foundedUser = _a.sent();
+                        if (!foundedUser) {
+                            return [2 /*return*/, null];
+                        }
+                        password = foundedUser.password, userWithoutPassword = __rest(foundedUser, ["password"]);
+                        return [2 /*return*/, userWithoutPassword];
+                    case 2:
+                        error_2 = _a.sent();
+                        throw new common_1.NotFoundException('Користувач був знайдений за нікнеймом.');
+                    case 3: return [2 /*return*/];
                 }
             });
         });
     };
-    UserService.prototype.update = function (id, updateUserDto) {
+    UserService.prototype.update = function (id) {
         return "This action updates a #" + id + " user";
     };
     UserService.prototype.remove = function (id) {

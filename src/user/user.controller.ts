@@ -9,7 +9,6 @@ import {
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
 
 @Controller('user')
 export class UserController {
@@ -31,18 +30,18 @@ export class UserController {
   }
 
   @Get('find-by-username/:username')
-  findByUsername(@Param('id') id: string) {
-    return this.userService.findByUsername(+id);
+  findByUsername(@Param('username') username: string) {
+    return this.userService.findByUsername(username);
   }
 
   @Get('find-by-email/:email')
-  findByEmail(@Param('id') id: string) {
-    return this.userService.findByEmail(+id);
+  findByEmail(@Param('email') email: string) {
+    return this.userService.findByEmail(email);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(+id, updateUserDto);
+  @Patch('updaete/:id')
+  update(@Param('id') id: string) {
+    return this.userService.update(+id);
   }
 
   @Delete(':id')
