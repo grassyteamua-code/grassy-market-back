@@ -70,10 +70,12 @@ var bcrypt_1 = require("bcrypt");
 var UserService = /** @class */ (function () {
     function UserService(prismaService) {
         this.prismaService = prismaService;
+        this.logger = new common_1.Logger(UserService_1.name);
     }
+    UserService_1 = UserService;
     UserService.prototype.create = function (createUserDto) {
         return __awaiter(this, void 0, void 0, function () {
-            var hashedPassword, repeatPassword, userDataWithoutRepeat, userData, newUser;
+            var hashedPassword, userData, existingUserByUsername, errorMessage, existingUserByEmail, errorMessage, newUser;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -81,15 +83,31 @@ var UserService = /** @class */ (function () {
                             throw new common_1.BadRequestException("Пароль є обов'язковим і повинен вводитися як строка.");
                         }
                         hashedPassword = this.hashPassword(createUserDto.password);
-                        repeatPassword = createUserDto.repeatPassword, userDataWithoutRepeat = __rest(createUserDto, ["repeatPassword"]);
-                        userData = __assign(__assign({}, userDataWithoutRepeat), { password: hashedPassword });
+                        userData = __assign(__assign({}, createUserDto), { password: hashedPassword, passwordRepeat: hashedPassword, status: 'active' });
+                        return [4 /*yield*/, this.findByUsername(createUserDto.username)];
+                    case 1:
+                        existingUserByUsername = _a.sent();
+                        if (existingUserByUsername) {
+                            errorMessage = "\u041A\u043E\u0440\u0438\u0441\u0442\u0443\u0432\u0430\u0447 \u0437 \u043D\u0456\u043A\u043D\u0435\u0439\u043C\u043E\u043C \"" + createUserDto.username + "\" \u0432\u0436\u0435 \u0456\u0441\u043D\u0443\u0454.";
+                            this.logger.error(errorMessage);
+                            throw new common_1.BadRequestException('Користувач з таким нікнеймом вже існує.');
+                        }
+                        return [4 /*yield*/, this.findByEmail(createUserDto.email)];
+                    case 2:
+                        existingUserByEmail = _a.sent();
+                        if (existingUserByEmail) {
+                            errorMessage = "\u041A\u043E\u0440\u0438\u0441\u0442\u0443\u0432\u0430\u0447 \u0437 \u0435\u043B\u0435\u043A\u0442\u0440\u043E\u043D\u043D\u043E\u044E \u0441\u043A\u0440\u0438\u043D\u044C\u043A\u043E\u044E \"" + createUserDto.email + "\" \u0432\u0436\u0435 \u0456\u0441\u043D\u0443\u0454.";
+                            this.logger.error(errorMessage);
+                            throw new common_1.BadRequestException('Користувач з такою електронною скринькою вже існує.');
+                        }
                         return [4 /*yield*/, this.prismaService.user
                                 .create({
                                 data: userData
                             })["catch"](function (error) {
+                                console.log('Помилка при створенні користувача:', error);
                                 throw new common_1.BadRequestException('Виникла помилка під час реєстрації нового користувача');
                             })];
-                    case 1:
+                    case 3:
                         newUser = _a.sent();
                         delete newUser.password;
                         return [2 /*return*/, newUser];
@@ -108,7 +126,7 @@ var UserService = /** @class */ (function () {
     };
     UserService.prototype.findByUsername = function (username) {
         return __awaiter(this, void 0, void 0, function () {
-            var foundedUser, _, userWithoutPassword, _a;
+            var foundedUser, userWithoutPassword, _a;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
@@ -121,7 +139,7 @@ var UserService = /** @class */ (function () {
                         if (!foundedUser) {
                             return [2 /*return*/, null];
                         }
-                        _ = foundedUser.password, userWithoutPassword = __rest(foundedUser, ["password"]);
+                        userWithoutPassword = __rest(foundedUser, []);
                         return [2 /*return*/, userWithoutPassword];
                     case 2:
                         _a = _b.sent();
@@ -133,7 +151,7 @@ var UserService = /** @class */ (function () {
     };
     UserService.prototype.findByEmail = function (email) {
         return __awaiter(this, void 0, void 0, function () {
-            var foundedUser, _, userWithoutPassword, error_1;
+            var foundedUser, userWithoutPassword, error_1;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -146,7 +164,7 @@ var UserService = /** @class */ (function () {
                         if (!foundedUser) {
                             return [2 /*return*/, null];
                         }
-                        _ = foundedUser.password, userWithoutPassword = __rest(foundedUser, ["password"]);
+                        userWithoutPassword = __rest(foundedUser, []);
                         return [2 /*return*/, userWithoutPassword];
                     case 2:
                         error_1 = _a.sent();
@@ -159,7 +177,7 @@ var UserService = /** @class */ (function () {
     };
     UserService.prototype.findByPhone = function (email) {
         return __awaiter(this, void 0, void 0, function () {
-            var foundedUser, _, userWithoutPassword, error_2;
+            var foundedUser, userWithoutPassword, error_2;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -172,7 +190,7 @@ var UserService = /** @class */ (function () {
                         if (!foundedUser) {
                             return [2 /*return*/, null];
                         }
-                        _ = foundedUser.password, userWithoutPassword = __rest(foundedUser, ["password"]);
+                        userWithoutPassword = __rest(foundedUser, []);
                         return [2 /*return*/, userWithoutPassword];
                     case 2:
                         error_2 = _a.sent();
@@ -189,7 +207,8 @@ var UserService = /** @class */ (function () {
     UserService.prototype.remove = function (id) {
         return "This action removes a #" + id + " user";
     };
-    UserService = __decorate([
+    var UserService_1;
+    UserService = UserService_1 = __decorate([
         common_1.Injectable()
     ], UserService);
     return UserService;

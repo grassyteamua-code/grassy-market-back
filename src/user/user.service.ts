@@ -2,6 +2,7 @@ import {
   Injectable,
   NotFoundException,
   BadRequestException,
+  Logger,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { PrismaService } from '../prisma/prisma.service';
@@ -9,6 +10,8 @@ import { hashSync, genSaltSync } from 'bcrypt';
 
 @Injectable()
 export class UserService {
+  private readonly logger = new Logger(UserService.name);
+
   constructor(private readonly prismaService: PrismaService) {}
 
   async create(createUserDto: CreateUserDto) {
@@ -20,15 +23,43 @@ export class UserService {
 
     const hashedPassword = this.hashPassword(createUserDto.password);
 
-    const { repeatPassword, ...userDataWithoutRepeat } = createUserDto;
+    const userData = {
+      ...createUserDto,
+      password: hashedPassword,
+      passwordRepeat: hashedPassword,
+      status: 'active',
+    };
 
-    const userData = { ...userDataWithoutRepeat, password: hashedPassword };
+    const existingUserByUsername = await this.findByUsername(
+      createUserDto.username,
+    );
+
+    if (existingUserByUsername) {
+      const errorMessage = `Користувач з нікнеймом "${createUserDto.username}" вже існує.`;
+
+      this.logger.error(errorMessage);
+
+      throw new BadRequestException('Користувач з таким нікнеймом вже існує.');
+    }
+
+    const existingUserByEmail = await this.findByEmail(createUserDto.email);
+
+    if (existingUserByEmail) {
+      const errorMessage = `Користувач з електронною скринькою "${createUserDto.email}" вже існує.`;
+
+      this.logger.error(errorMessage);
+
+      throw new BadRequestException(
+        'Користувач з такою електронною скринькою вже існує.',
+      );
+    }
 
     const newUser = await this.prismaService.user
       .create({
         data: userData,
       })
       .catch((error) => {
+        console.log('Помилка при створенні користувача:', error);
         throw new BadRequestException(
           'Виникла помилка під час реєстрації нового користувача',
         );
@@ -61,7 +92,7 @@ export class UserService {
         return null;
       }
 
-      const { password: _, ...userWithoutPassword } = foundedUser;
+      const { ...userWithoutPassword } = foundedUser;
 
       return userWithoutPassword;
     } catch {
@@ -79,7 +110,7 @@ export class UserService {
         return null;
       }
 
-      const { password: _, ...userWithoutPassword } = foundedUser;
+      const { ...userWithoutPassword } = foundedUser;
 
       return userWithoutPassword;
     } catch (error) {
@@ -100,7 +131,7 @@ export class UserService {
         return null;
       }
 
-      const { password: _, ...userWithoutPassword } = foundedUser;
+      const { ...userWithoutPassword } = foundedUser;
 
       return userWithoutPassword;
     } catch (error) {
