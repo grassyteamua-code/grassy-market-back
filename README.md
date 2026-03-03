@@ -9,15 +9,25 @@
 Проєкт базується на сучасному стеку для забезпечення максимальної швидкості та
 безпеки:
 
-- **Nest.js** — [https://www.nextjs.org/docs](https://docs.nestjs.com/)
-- **TypeScript** — [https://www.typescriptlang.org/docs](https://www.typescriptlang.org/docs/)
-- Робота з базою даних
+Бібліотеки/фреймворки:
+  - **Nest.js** — [https://www.nextjs.org/docs](https://docs.nestjs.com/)
+Мови програмування:
+  - **TypeScript** — [https://www.typescriptlang.org/docs](https://www.typescriptlang.org/docs/)
+  - **JavaScript** —  [https://developer.mozilla.org/en-US/docs/Web/JavaScript](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
+Робота з базою даних
 - **PostgreSQL** — [https://www.postgresql.org/docs/current/index.html](https://www.postgresql.org/docs/current/index.html)
 - **Neon Serverless Postgres** - [https://neon.com/](https://neon.com/)
+- **Prisma ORM** [https://www.prisma.io/](https://www.prisma.io/)
+Тестування
+  - **Jest** - [https://jestjs.io/uk/](https://jestjs.io/uk/)
+Контейнеризація
   - **Docker** - [https://www.docker.com/products/docker-desktop](https://www.docker.com/products/docker-desktop/)
-- Тестування
-- **Jest** - [https://jestjs.io/uk/](https://jestjs.io/uk/)
-- 
+OpenAPI документація для тестування API:
+  - **Swagger** [https://swagger.io/](https://swagger.io/)
+Розвертання на реальному сервері:
+  - **Render**: [https://render.com/](https://render.com/)
+  - **AWS C2**: [https://aws.amazon.com/ru/ec2/](https://aws.amazon.com/ru/ec2/)
+
 ## Структура бекенд-частини проєкту
 ```
 ├── node_modules/                                # 📚 містить усі встановлені залежності (бібліотеки npm), які використовує проєкт            
