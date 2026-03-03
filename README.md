@@ -56,10 +56,10 @@
 │      ├─ app.controller.ts
 │      ├─ app.module.ts
 │      ├─ app.service.ts
-│      ├─ main.ts 
+│      └─ main.ts 
 │   ├─ test/
 │      ├─ app.e2e-spec.ts
-│      ├─ jest-e2e.json
+│      └─ jest-e2e.json
 │   ├─ .env
 │   ├─ .gitingnore
 │   ├─ .prettier
