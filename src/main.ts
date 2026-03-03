@@ -1,4 +1,5 @@
 import { NestFactory } from '@nestjs/core';
+import { Logger } from '@nestjs/common';
 import { AppModule } from './app.module';
 import { corsOptions } from './config/cors-options.config';
 
@@ -9,6 +10,8 @@ async function bootstrap() {
 
   app.enableCors(corsOptions);
   app.setGlobalPrefix('api');
+
+  Logger.log(`Сервер було запущено на порту: ${PORT}`);
 
   await app.listen(PORT, () =>
     console.log(`Сервер було запущено на порту: ${PORT}`),
