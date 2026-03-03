@@ -14,7 +14,9 @@
 - **PostgreSQL** — [https://www.postgresql.org/docs/current/index.html](https://www.postgresql.org/docs/current/index.html)
 - **Docker Compose** - [https://www.docker.com/products/docker-desktop](https://www.docker.com/products/docker-desktop/)
 - **Neon Serverless Postgres** - [https://neon.com/](https://neon.com/)
-- **Jest** - [https://jestjs.io/uk/](https://jestjs.io/uk/))
+-- Тестування
+- **Jest** - [https://jestjs.io/uk/](https://jestjs.io/uk/)
+- 
 ## Структура бекенд-частини проєкту
 ```
 ├── node_modules/                                # 📚 містить усі встановлені залежності (бібліотеки npm), які використовує проєкт            
