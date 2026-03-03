@@ -18,21 +18,21 @@
 
 Робота з базою даних:
 - **PostgreSQL** — [https://www.postgresql.org/docs/current/index.html](https://www.postgresql.org/docs/current/index.html)
-- **Neon Serverless Postgres** - [https://neon.com/](https://neon.com/)
-- **Prisma ORM** [https://www.prisma.io/](https://www.prisma.io/)
+- **Neon Serverless Postgres** — [https://neon.com/](https://neon.com/)
+- **Prisma ORM** — [https://www.prisma.io/](https://www.prisma.io/)
 
 Тестування:
-  - **Jest** - [https://jestjs.io/uk/](https://jestjs.io/uk/)
+  - **Jest** — [https://jestjs.io/uk/](https://jestjs.io/uk/)
 
 Контейнеризація:
-  - **Docker** - [https://www.docker.com/products/docker-desktop](https://www.docker.com/products/docker-desktop/)
+  - **Docker** — [https://www.docker.com/products/docker-desktop](https://www.docker.com/products/docker-desktop/)
 
 OpenAPI документація для тестування API:
-  - **Swagger** [https://swagger.io/](https://swagger.io/)
+  - **Swagger** — [https://swagger.io/](https://swagger.io/)
 
 Розвертання на реальному сервері:
-  - **Render**: [https://render.com/](https://render.com/)
-  - **AWS C2**: [https://aws.amazon.com/ru/ec2/](https://aws.amazon.com/ru/ec2/)
+  - **Render** — [https://render.com/](https://render.com/)
+  - **AWS C2** — [https://aws.amazon.com/ru/ec2/](https://aws.amazon.com/ru/ec2/)
 
 ## Структура бекенд-частини проєкту
 ```
