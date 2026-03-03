@@ -103,7 +103,7 @@
 ## 📌 Призначення змінних оточення:
  
 - Змінна `DATABASE_URL` слугує для зв'язку між Prisma ORM та Neon Serverless Postgres базою даних;
-- Змінна `PORT` слугує для запуску сервера локально на даному порту;
+- Змінна `PORT` слугує для запуску сервера локально на вказаному порту;
 
 ```bash
 DATABASE_URL=postgresql://neondb_owner:npg_sD4fXhvT9GyR@ep-little-surf-a18vye4s-pooler.ap-southeast-1.aws.neon.tech/prisma_migrate_shadow_db_43238705-f513-4530-88a1-38463ccbf0a0?sslmode=require&channel_binding=require
