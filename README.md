@@ -95,3 +95,18 @@
 │   ├─ tsconfig.json                             # 🗂️ основна конфігурація TypeScript
 │   └─ yarn.lock                                 # 🔏 блокування версій залежностей YARN
 ```
+
+## 🔑 Пакетний менеджер (node_module) та змінні оточення (.env)
+
+Для ефективної роботи з базою даних та сервером завантажуємо `.env`-файл звідси () або створюємо `.env`-файл самостійно у корні репозиторію та копіюємо 
+ось змінні нижче тв вставляємо у свій файл, а також завантажуємо пакетний менеджер `node_module` звідси ().
+
+ Призначення змінних оточення:
+ 
+- Змінна `DATABASE_URL` слугує для зв'язку між Prisma ORM та Neon Serverless Postgres базою даних;
+- Змінна `PORT` слугує для запуску сервера локально на даному порту;
+
+```bash
+DATABASE_URL=postgresql://neondb_owner:npg_sD4fXhvT9GyR@ep-little-surf-a18vye4s-pooler.ap-southeast-1.aws.neon.tech/prisma_migrate_shadow_db_43238705-f513-4530-88a1-38463ccbf0a0?sslmode=require&channel_binding=require
+PORT=3001
+```
