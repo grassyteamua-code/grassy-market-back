@@ -1,17 +1,22 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { RegisterDto } from './dto/register/register.dto';
 import { PrismaService } from '@prisma/prisma.service';
-import { genSaltSync, hashSync } from 'bcrypt';
+import { UserService } from '../user/user.service';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(
+    private readonly prismaService: PrismaService,
+    private readonly userService: UserService,
+  ) {}
 
   async register(registerDto: RegisterDto) {
-   
-  };
+    const createUser = await this.prismaService.user.create({ data: registerDto });
 
-  private hashPassword(password: string) {
-    return hashSync(password, genSaltSync(10));
+    if (createUser) {
+      throw new BadRequestException(
+        'Виникла помилка при реєстрації нового користувача. Будь ласка, спробуйте ще раз.',
+      );
+    }
   }
 }

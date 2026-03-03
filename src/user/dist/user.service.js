@@ -72,17 +72,30 @@ var UserService = /** @class */ (function () {
         this.prismaService = prismaService;
     }
     UserService.prototype.create = function (createUserDto) {
-        var hashadPassword = this.hashPassword(registerDto.password);
-        var userData = __assign(__assign({}, registerDto), { password: hashedPassword });
-        delete userData.repeatPassword;
-        var newUser = yield this.prismaService.user
-            .create({
-            data: userData
-        })["catch"](function (error) {
-            throw new BadRequestException('Виникла помилка під час реєстрації нового користувача');
+        return __awaiter(this, void 0, void 0, function () {
+            var hashedPassword, repeatPassword, userDataWithoutRepeat, userData, newUser;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        if (!createUserDto.password || typeof createUserDto.password !== 'string') {
+                            throw new common_1.BadRequestException('Password is required and must be a string');
+                        }
+                        hashedPassword = this.hashPassword(createUserDto.password);
+                        repeatPassword = createUserDto.repeatPassword, userDataWithoutRepeat = __rest(createUserDto, ["repeatPassword"]);
+                        userData = __assign(__assign({}, userDataWithoutRepeat), { password: hashedPassword });
+                        return [4 /*yield*/, this.prismaService.user
+                                .create({
+                                data: userData
+                            })["catch"](function (error) {
+                                throw new common_1.BadRequestException('Виникла помилка під час реєстрації нового користувача');
+                            })];
+                    case 1:
+                        newUser = _a.sent();
+                        delete newUser.password;
+                        return [2 /*return*/, newUser];
+                }
+            });
         });
-        delete newUser.password;
-        return newUser;
     };
     UserService.prototype.hashPassword = function (password) {
         return bcrypt_1.hashSync(password, bcrypt_1.genSaltSync(10));
@@ -95,7 +108,7 @@ var UserService = /** @class */ (function () {
     };
     UserService.prototype.findByUsername = function (username) {
         return __awaiter(this, void 0, void 0, function () {
-            var foundedUser, password, userWithoutPassword, _a;
+            var foundedUser, _, userWithoutPassword, _a;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
@@ -108,7 +121,7 @@ var UserService = /** @class */ (function () {
                         if (!foundedUser) {
                             return [2 /*return*/, null];
                         }
-                        password = foundedUser.password, userWithoutPassword = __rest(foundedUser, ["password"]);
+                        _ = foundedUser.password, userWithoutPassword = __rest(foundedUser, ["password"]);
                         return [2 /*return*/, userWithoutPassword];
                     case 2:
                         _a = _b.sent();
@@ -120,7 +133,7 @@ var UserService = /** @class */ (function () {
     };
     UserService.prototype.findByEmail = function (email) {
         return __awaiter(this, void 0, void 0, function () {
-            var foundedUser, password, userWithoutPassword, error_1;
+            var foundedUser, _, userWithoutPassword, error_1;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -133,36 +146,37 @@ var UserService = /** @class */ (function () {
                         if (!foundedUser) {
                             return [2 /*return*/, null];
                         }
-                        password = foundedUser.password, userWithoutPassword = __rest(foundedUser, ["password"]);
+                        _ = foundedUser.password, userWithoutPassword = __rest(foundedUser, ["password"]);
                         return [2 /*return*/, userWithoutPassword];
                     case 2:
                         error_1 = _a.sent();
-                        throw new common_1.NotFoundException('Користувач був знайдений за нікнеймом.');
+                        console.error(error_1);
+                        throw new common_1.NotFoundException('Користувач був знайдений за електронною поштою.');
                     case 3: return [2 /*return*/];
                 }
             });
         });
     };
-    UserService.prototype.findByPhone = function (email) {
+    UserService.prototype.findByPhone = function (phone) {
         return __awaiter(this, void 0, void 0, function () {
-            var foundedUser, password, userWithoutPassword, error_2;
+            var foundedUser, _, userWithoutPassword, error_2;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
                         return [4 /*yield*/, this.prismaService.user.findUnique({
-                                where: { email: email }
+                                where: { phone: phone }
                             })];
                     case 1:
                         foundedUser = _a.sent();
                         if (!foundedUser) {
                             return [2 /*return*/, null];
                         }
-                        password = foundedUser.password, userWithoutPassword = __rest(foundedUser, ["password"]);
+                        _ = foundedUser.password, userWithoutPassword = __rest(foundedUser, ["password"]);
                         return [2 /*return*/, userWithoutPassword];
                     case 2:
                         error_2 = _a.sent();
-                        throw new common_1.NotFoundException('Користувач був знайдений за нікнеймом.');
+                        throw new common_1.NotFoundException('Користувач був знайдений за номером телефону.');
                     case 3: return [2 /*return*/];
                 }
             });

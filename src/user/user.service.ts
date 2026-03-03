@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { hashSync, genSaltSync } from 'bcrypt';
@@ -7,12 +11,16 @@ import { hashSync, genSaltSync } from 'bcrypt';
 export class UserService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  create(createUserDto: CreateUserDto) {
-    const hashadPassword = this.hashPassword(registerDto.password);
+  async create(createUserDto: CreateUserDto) {
+    if (!createUserDto.password || typeof createUserDto.password !== 'string') {
+      throw new BadRequestException('Password is required and must be a string');
+    }
 
-    const userData = { ...registerDto, password: hashedPassword };
+    const hashedPassword = this.hashPassword(createUserDto.password);
 
-    delete userData.repeatPassword;
+    const { repeatPassword, ...userDataWithoutRepeat } = createUserDto;
+
+    const userData = { ...userDataWithoutRepeat, password: hashedPassword };
 
     const newUser = await this.prismaService.user
       .create({
@@ -50,7 +58,7 @@ export class UserService {
         return null;
       }
 
-      const { password, ...userWithoutPassword } = foundedUser;
+      const { password: _, ...userWithoutPassword } = foundedUser;
 
       return userWithoutPassword;
     } catch {
@@ -68,29 +76,32 @@ export class UserService {
         return null;
       }
 
-      const { password, ...userWithoutPassword } = foundedUser;
+      const { password: _, ...userWithoutPassword } = foundedUser;
 
       return userWithoutPassword;
     } catch (error) {
-      throw new NotFoundException('Користувач був знайдений за нікнеймом.');
+      console.error(error);
+      throw new NotFoundException(
+        'Користувач був знайдений за електронною поштою.',
+      );
     }
   }
 
-  async findByPhone(email: string) {
+  async findByPhone(phone: string) {
     try {
       const foundedUser = await this.prismaService.user.findUnique({
-        where: { email },
+        where: { phone },
       });
 
       if (!foundedUser) {
         return null;
       }
 
-      const { password, ...userWithoutPassword } = foundedUser;
+      const { password: _, ...userWithoutPassword } = foundedUser;
 
       return userWithoutPassword;
     } catch (error) {
-      throw new NotFoundException('Користувач був знайдений за нікнеймом.');
+      throw new NotFoundException('Користувач був знайдений за номером телефону.');
     }
   }
 

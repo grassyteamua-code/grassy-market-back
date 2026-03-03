@@ -44,21 +44,26 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 exports.__esModule = true;
 exports.AuthService = void 0;
 var common_1 = require("@nestjs/common");
-var bcrypt_1 = require("bcrypt");
 var AuthService = /** @class */ (function () {
-    function AuthService(prismaService) {
+    function AuthService(prismaService, userService) {
         this.prismaService = prismaService;
+        this.userService = userService;
     }
     AuthService.prototype.register = function (registerDto) {
         return __awaiter(this, void 0, void 0, function () {
+            var createUser;
             return __generator(this, function (_a) {
-                return [2 /*return*/];
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.prismaService.user.create({ data: registerDto })];
+                    case 1:
+                        createUser = _a.sent();
+                        if (createUser) {
+                            throw new common_1.BadRequestException('Виникла помилка при реєстрації нового користувача. Будь ласка, спробуйте ще раз.');
+                        }
+                        return [2 /*return*/];
+                }
             });
         });
-    };
-    ;
-    AuthService.prototype.hashPassword = function (password) {
-        return bcrypt_1.hashSync(password, bcrypt_1.genSaltSync(10));
     };
     AuthService = __decorate([
         common_1.Injectable()
