@@ -14,20 +14,20 @@ enum Role {
 
 model User {
   id               String          @id @default(uuid())
-  username         String
+  username         String          @unique
   email            String          @unique
   password         String
-  passwordRepeat   String
-  firstName        String
-  middleName       String
-  lastName         String
+  passwordRepeat   String          @map("password_repeat")
+  firstName        String          @map("first_name")
+  middleName       String          @map("middle_name")
+  lastName         String          @map("last_name")
   role             Role[]          @default([SELLER])
   status           String
   buyerProfile     BayerProfile?
   carrierProfile   CarrierProfile? 
   sellerProfile    SellerProfile?
-  createdAt        DateTime        @default(now())
-  updatedAt        DateTime        @updatedAt
+  createdAt        DateTime        @default(now()) @map("created_at")
+  updatedAt        DateTime        @updatedAt @map("updated_at")
   refreshTokens    RefreshToken[]
   userSocials      UserSocial[]
   auditLogs        AuditLog[]
@@ -41,8 +41,8 @@ model SellerProfile {
   id              String  @id @default(uuid())
   companyName     String
   contactPerson   String
-  phone           String
   companyAddress  String
+  phone            String
   edrpou          String  @unique
   verificationDoc String
   acceptTerms     Boolean @default(false)
@@ -54,8 +54,8 @@ model BayerProfile {
   id             String   @id @default(uuid())
   companyName    String
   contactPerson  String   
-  phone          String
   companyAddress String
+  phone          String
   edrpou         String   @unique
   urlDocEdr      String?  
   acceptTerms    Boolean  @default(false)
@@ -67,8 +67,8 @@ model CarrierProfile {
   id             String   @id @default(uuid())
   companyName    String   
   edrpou         String   @unique 
-  phone          String   
   vehicleDetails String   
+  phone          String
   locations      String   
   acceptTerms    Boolean  @default(false)
   userId         String   @unique

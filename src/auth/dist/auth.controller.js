@@ -12,11 +12,14 @@ exports.__esModule = true;
 exports.AuthController = void 0;
 var common_1 = require("@nestjs/common");
 var AuthController = /** @class */ (function () {
-    function AuthController(authService) {
+    function AuthController(authService, userService) {
         this.authService = authService;
+        this.userService = userService;
     }
-    AuthController.prototype.register = function (registerData) {
-        console.log('Register data:', registerData);
+    AuthController.prototype.register = function (registerDto) {
+        var existingUserByUsername = this.userService.findByUsername(registerDto.username);
+        console.log("Existing user by username:", existingUserByUsername);
+        return this.authService.register(registerDto);
     };
     AuthController.prototype.login = function () {
         return 'login';

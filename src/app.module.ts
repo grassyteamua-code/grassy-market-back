@@ -4,10 +4,12 @@ import { AppService } from './app.service';
 import { UserService } from "./user/user.service";
 import { PrismaService } from "./prisma/prisma.service";
 import { AuthModule } from './auth/auth.module';
+import { PrismaModule } from './prisma/prisma.module';
+import { UserModule } from './user/user.module';
 
 @Module({
   controllers: [AppController],
   providers: [AppService, UserService, PrismaService],
-  imports: [AuthModule],
+  imports: [AuthModule, PrismaModule, UserModule],
 })
 export class AppModule {}

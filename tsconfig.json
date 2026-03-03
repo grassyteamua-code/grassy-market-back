@@ -29,9 +29,10 @@
       "@prisma/*": ["src/prisma/*"],
       "@auth": ["src/auth"],
       "@auth/*": ["src/auth/*"],
-      "@config": ["config"],
-      "@config/*": ["config/*"]
-    }
+      "@config": ["src/config"],
+      "@config/*": ["src/config/*"]
+    },
+    "types": ["node"]
   },
   "include": ["src"],
   "exclude": ["node_modules", "dist"]

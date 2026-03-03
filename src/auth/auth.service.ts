@@ -1,26 +1,34 @@
-import { Injectable } from '@nestjs/common';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { RegisterDto } from './dto/register/register.dto';
+import { PrismaService } from '@prisma/prisma.service';
+import { genSaltSync, hashSync } from 'bcrypt';
 
 @Injectable()
 export class AuthService {
-  create(createAuthDto: CreateAuthDto) {
-    return 'This action adds a new auth';
-  }
+  constructor(private readonly prismaService: PrismaService) {}
 
-  findAll() {
-    return `This action returns all auth`;
-  }
+  async register(registerDto: RegisterDto) {
+    const hashadPassword = this.hashPassword(registerDto.password);
 
-  findOne(id: number) {
-    return `This action returns a #${id} auth`;
-  }
+    const userData = { ...registerDto, password: hashedPassword };
 
-  update(id: number, updateAuthDto: UpdateAuthDto) {
-    return `This action updates a #${id} auth`;
-  }
+    delete userData.repeatPassword;
 
-  remove(id: number) {
-    return `This action removes a #${id} auth`;
+    const newUser = await this.prismaService.user
+      .create({
+        data: userData,
+      })
+      .catch((error) => {
+        throw new BadRequestException(
+          'Виникла помилка під час реєстрації нового користувача',
+        );
+      });
+    delete newUser.password;
+
+    return newUser;
+  };
+
+  private hashPassword(password: string) {
+    return hashSync(password, genSaltSync(10));
   }
 }

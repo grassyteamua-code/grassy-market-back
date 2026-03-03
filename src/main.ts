@@ -1,26 +1,17 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { corsOptions } from './config/cors-options.config';
 
-const options = {
-  origin: ['http://localhost:5173'],
-  method: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: [
-    'Origin',
-    'X-Requested-With',
-    'Content-Type',
-    'Accept',
-    'Authorization',
-  ],
-  credential: true,
-  optionsSuccessStatus: 200,
-};
+const PORT = process.env.PORT ?? 3000;
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  app.enableCors(options);
+  app.enableCors(corsOptions);
   app.setGlobalPrefix('api');
 
-  await app.listen(3000);
+  await app.listen(PORT, () =>
+    console.log(`Сервер було запущено на порту: ${PORT}`),
+  );
 }
 bootstrap().catch((error) => console.error(error));
