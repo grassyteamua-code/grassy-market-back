@@ -47,11 +47,11 @@
 │             └─ update-user.dto.ts
 │          ├─ entities/
 │             └─ user.entity.ts
-│          ├─ user.contoller.spec.ts/
-│          ├─ user.contoller.ts/
-│          ├─ user.module.ts/
-│          ├─ user.service.spec.ts/
-│          └─ user.service.ts/
+│          ├─ user.contoller.spec.ts
+│          ├─ user.contoller.ts
+│          ├─ user.module.ts
+│          ├─ user.service.spec.ts
+│          └─ user.service.ts
 │      ├─ app.controller.spec.ts
 │      ├─ app.controller.ts
 │      ├─ app.module.ts
