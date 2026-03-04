@@ -10,32 +10,31 @@
 безпеки:
 
 ## 📚 Бібліотеки/фреймворки:
-  - **Nest.js** — [https://www.nextjs.org/docs](https://docs.nestjs.com/)
-  - **Node.js** — [https://www.nextjs.org/docs](https://nodejs.org/en)
+  - **Nest.js** — [https://www.nextjs.org/docs](https://docs.nestjs.com/) (прогресивний Node.js фреймворк для створення ефективних, надійних і масштабованих серверних додатків)
+  - **Node.js** — [https://www.nextjs.org/docs](https://nodejs.org/en) (кросплатформне середовище виконання JavaScript з відкритим кодом)
 
 ## 📜 Мови програмування:
-  - **TypeScript** — [https://www.typescriptlang.org/docs](https://www.typescriptlang.org/docs/)
-  - **JavaScript** —  [https://developer.mozilla.org/en-US/docs/Web/JavaScript](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
+  - **TypeScript** — [https://www.typescriptlang.org/docs](https://www.typescriptlang.org/docs/) (мова програмування, що є надмножиною (superset) JavaScript, яка додає статичну типізацію та інші розширені можливості)
+  - **JavaScript** —  [https://developer.mozilla.org/en-US/docs/Web/JavaScript](https://developer.mozilla.org/en-US/docs/Web/JavaScript) (високорівнева, інтерпретована мова програмування, яка є стандартом для створення інтерактивних, динамічних вебсторінок та вебдодатків)
 
 ## 💾 Робота з базою даних:
-- **PostgreSQL** — [https://www.postgresql.org/docs/current/index.html](https://www.postgresql.org/docs/current/index.html)
-- **Neon Serverless Postgres** — [https://neon.com/](https://neon.com/)
-- **Prisma ORM** — [https://www.prisma.io/](https://www.prisma.io/)
+- **PostgreSQL** — [https://www.postgresql.org/docs/current/index.html](https://www.postgresql.org/docs/current/index.html) (об'єктно-реляційна система керування базами даних (СКБД) з відкритим кодом)
+- **Neon Serverless Postgres** — [https://neon.com/](https://neon.com/) (хмарна, безсерверна, повністю керована служба бази даних PostgreSQL)
+- **Prisma ORM** — [https://www.prisma.io/](https://www.prisma.io/) (об'єктно-реляційне представлення нового покоління для Node.js і TypeScript, що забезпечує безпечний доступ до баз даних, міграції та візуальний редактор даних)
 
 ## ⚒️ Тестування:
-  - **Jest** — [https://jestjs.io/uk/](https://jestjs.io/uk/)
+  - **Jest** — [https://jestjs.io/uk/](https://jestjs.io/uk/) (популярний JavaScript-фреймворк для тестування, який фокусується на простоті, швидкості та зручності)
 
 ## 🐋 Контейнеризація:
-  - **Docker** — [https://www.docker.com/products/docker-desktop](https://www.docker.com/products/docker-desktop/)
+  - **Docker** — [https://www.docker.com/products/docker-desktop](https://www.docker.com/products/docker-desktop/) (платформа з відкритим вихідним кодом, що використовується для автоматизації розгортання, масштабування та керування додатками в ізольованих середовищах, які називаються контейнерами)
 
-## 🔗 OpenAPI документація для тестування API:
-  - **Swagger** — [https://swagger.io/](https://swagger.io/)
+## 🔗 Проектування, документування, тестування RESTful API:
+  - **Swagger** — [https://swagger.io/](https://swagger.io/) (набір інструментів (з відкритим кодом), призначений для проектування, документування, тестування та автоматичної генерації документації для RESTful API на основі специфікації OpenAPI) 
 
-## 🖧 Розвертання на реальному сервері:
-  - **Render** — [https://render.com/](https://render.com/)
-  - **Amazon Web Services C2** — [https://aws.amazon.com/ru/ec2/](https://aws.amazon.com/ru/ec2/)
+## 🖧 Розгортання та масштабування:
+  - **Render** — [https://render.com/](https://render.com/) (сучасна хмарна платформа (PaaS - Platform as a Service) для розробників, призначена для швидкого створення, розгортання (деплою) та масштабування веб-додатків, API, статичних сайтів та баз даних)
 
-## Структура бекенд-частини проєкту
+## 📋 Структура бекенд-частини проєкту
 ```
 ├── node_modules/                                # 🗃️ містить усі встановлені залежності (бібліотеки npm), які використовує проєкт            
 │   ├─ prisma/                                   # 🗄️ тут зберігаються файли інструменту (бібліотеки) для об'єктно-реляційного відображення Prisma ORM 
@@ -87,6 +86,7 @@
 │   ├─ eslint.config.mjs                         # 📰 правила ESLint для перевірки коду
 │   ├─ Makefile                                  # 🪪 автоматизація команд (запуск, збірка)
 │   ├─ README.md                                 # 📋 опис застосунку/проєкту
+│   ├─ neon_workflow.yml                         # 🛠️ конфігурація Neon Workflow YAML
 │   ├─ nest-cli.json                             # 🛠️ конфігурація Nest.js CLI
 │   ├─ package-lock.json                         # 🗂️ залежності та скрипти NPM
 │   ├─ package.json                              # 🔏 блокування версій залежностей NPM
@@ -110,3 +110,5 @@
 DATABASE_URL=postgresql://neondb_owner:npg_sD4fXhvT9GyR@ep-little-surf-a18vye4s-pooler.ap-southeast-1.aws.neon.tech/prisma_migrate_shadow_db_43238705-f513-4530-88a1-38463ccbf0a0?sslmode=require&channel_binding=require
 PORT=3001
 ```
+
+## 📖 Робота зі Swagger OpenAI:
