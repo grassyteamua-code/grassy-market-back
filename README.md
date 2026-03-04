@@ -33,7 +33,7 @@
 
 ## 🖧 Розвертання на реальному сервері:
   - **Render** — [https://render.com/](https://render.com/)
-  - **AWS C2** — [https://aws.amazon.com/ru/ec2/](https://aws.amazon.com/ru/ec2/)
+  - **Amazon Web Services C2** — [https://aws.amazon.com/ru/ec2/](https://aws.amazon.com/ru/ec2/)
 
 ## Структура бекенд-частини проєкту
 ```
