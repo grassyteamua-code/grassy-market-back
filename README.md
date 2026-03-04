@@ -14,12 +14,12 @@
   - **Node.js** — [https://www.nextjs.org/docs](https://nodejs.org/en) (кросплатформне середовище виконання **JavaScript** з відкритим кодом)
 
 ## 📜 Мови програмування:
-  - **TypeScript** — [https://www.typescriptlang.org/docs](https://www.typescriptlang.org/docs/) (мова програмування, що є надмножиною (`superset`) **JavaScript**, яка додає статичну типізацію та інші розширені можливості)
+  - **TypeScript** — [https://www.typescriptlang.org/docs](https://www.typescriptlang.org/docs/) (мова програмування, що є надмножиною (**superset**) **JavaScript**, яка додає статичну типізацію та інші розширені можливості)
   - **JavaScript** —  [https://developer.mozilla.org/en-US/docs/Web/JavaScript](https://developer.mozilla.org/en-US/docs/Web/JavaScript) (високорівнева, інтерпретована мова програмування, яка є стандартом для створення інтерактивних, динамічних вебсторінок та вебдодатків)
 
 ## 💾 Робота з базою даних:
 - **PostgreSQL** — [https://www.postgresql.org/docs/current/index.html](https://www.postgresql.org/docs/current/index.html) (об'єктно-реляційна система керування базами даних (СКБД) з відкритим кодом)
-- **Neon Serverless Postgres** — [https://neon.com/](https://neon.com/) (хмарна, безсерверна, повністю керована служба бази даних PostgreSQL)
+- **Neon Serverless Postgres** — [https://neon.com/](https://neon.com/) (хмарна, безсерверна, повністю керована служба бази даних **PostgreSQL**)
 - **Prisma ORM** — [https://www.prisma.io/](https://www.prisma.io/) (об'єктно-реляційне представлення нового покоління для **Node.js** і **TypeScript**, що забезпечує безпечний доступ до баз даних, міграції та візуальний редактор даних)
 
 ## ⚒️ Тестування:
@@ -29,10 +29,10 @@
   - **Docker** — [https://www.docker.com/products/docker-desktop](https://www.docker.com/products/docker-desktop/) (платформа з відкритим вихідним кодом, що використовується для автоматизації розгортання, масштабування та керування додатками в ізольованих середовищах, які називаються контейнерами)
 
 ## 🔗 Проектування, документування, тестування API:
-  - **Swagger** — [https://swagger.io/](https://swagger.io/) (набір інструментів (з відкритим кодом), призначений для проектування, документування, тестування та автоматичної генерації документації для **RESTful API** на основі специфікації **OpenAPI) 
+  - **Swagger** — [https://swagger.io/](https://swagger.io/) (набір інструментів (з відкритим кодом), призначений для проектування, документування, тестування та автоматичної генерації документації для **RESTful API** на основі специфікації **OpenAPI**) 
 
 ## 🖧 Розгортання та масштабування:
-  - **Render** — [https://render.com/](https://render.com/) (сучасна хмарна платформа (**PaaS** - **Platform** as a **Service**) для розробників, призначена для швидкого створення, розгортання (деплою) та масштабування веб-додатків, **API**, статичних сайтів та баз даних)
+  - **Render** — [https://render.com/](https://render.com/) (сучасна хмарна платформа (**PaaS** - **Platform** as a **Service**) для розробників, призначена для швидкого створення, розгортання (**deploy**) та масштабування веб-додатків, **API**, статичних сайтів та баз даних)
 
 ## 📋 Структура бекенд-частини проєкту
 ```
