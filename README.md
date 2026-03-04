@@ -12,6 +12,7 @@
 ## 📚 Бібліотеки/фреймворки:
   - **Nest.js** — [https://www.nextjs.org/docs](https://docs.nestjs.com/)
   - **Node.js** — [https://www.nextjs.org/docs](https://nodejs.org/en)
+
 ## 📜 Мови програмування:
   - **TypeScript** — [https://www.typescriptlang.org/docs](https://www.typescriptlang.org/docs/)
   - **JavaScript** —  [https://developer.mozilla.org/en-US/docs/Web/JavaScript](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
@@ -32,7 +33,7 @@
 
 ## 🖧 Розвертання на реальному сервері:
   - **Render** — [https://render.com/](https://render.com/)
-  - **AWS C2** — [https://aws.amazon.com/ru/ec2/](https://aws.amazon.com/ru/ec2/)
+  - **Amazon Web Services C2** — [https://aws.amazon.com/ru/ec2/](https://aws.amazon.com/ru/ec2/)
 
 ## Структура бекенд-частини проєкту
 ```
