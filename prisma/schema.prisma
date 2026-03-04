@@ -13,76 +13,96 @@ enum Role {
 }
 
 model User {
-  id               String          @id @default(uuid())
-  username         String          @unique
-  email            String          @unique
-  password         String
-  passwordRepeat   String          @map("password_repeat")
-  firstName        String          @map("first_name")
-  middleName       String          @map("middle_name")
-  lastName         String          @map("last_name")
-  mobilephone      String
-  role             Role[]          @default([SELLER])
-  status           String
-  buyerProfile     BayerProfile?
-  carrierProfile   CarrierProfile? 
-  sellerProfile    SellerProfile?
-  createdAt        DateTime        @default(now()) @map("created_at")
-  updatedAt        DateTime        @updatedAt @map("updated_at")
-  refreshTokens    RefreshToken[]
-  userSocials      UserSocial[]
-  auditLogs        AuditLog[]
-  resetPasswords   ResetPassword[]
-  carts            Cart[]
-  orders           Order[]
-  payments         Payment[]
+  id                String            @id @default(uuid())
+  username          String            @unique
+  email             String            @unique
+  password          String
+  passwordRepeat    String            @map("password_repeat")
+  firstName         String            @map("first_name")
+  middleName        String            @map("middle_name")
+  lastName          String            @map("last_name")
+  mobilephone       String
+  role              Role[]            @default([SELLER])
+  status            String
+  buyerProfile      BayerProfile?
+  carrierProfile    CarrierProfile?
+  sellerProfile     SellerProfile?
+  createdAt         DateTime          @default(now()) @map("created_at")
+  updatedAt         DateTime          @updatedAt @map("updated_at")
+  refreshTokens     RefreshToken[]
+  userSocials       UserSocial[]
+  auditLogs         AuditLog[]
+  resetPasswords    ResetPassword[]
+  carts             Cart[]
+  orders            Order[]
+  payments          Payment[]
+
+  leaseDetails LeaseDetails[]
 }
 
 model SellerProfile {
-  id              String  @id @default(uuid())
-  companyName     String
-  contactPerson   String
-  companyAddress  String
-  phone            String
-  edrpou          String  @unique
-  verificationDoc String
-  acceptTerms     Boolean @default(false)
-  userId          String  @unique
-  user            User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                  String     @id @default(uuid())
+  companyName         String
+  contactPerson       String
+  phone               String  
+  companyAddress      String
+  edrpou              String     @unique
+  verificationDoc     String
+  certificationDoc    String?    
+  acceptTerms         Boolean    @default(false)
+  userId              String     @unique
+  user                User       @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model BayerProfile {
-  id             String   @id @default(uuid())
-  companyName    String
-  contactPerson  String   
-  companyAddress String
-  phone          String
-  edrpou         String   @unique
-  urlDocEdr      String?  
-  acceptTerms    Boolean  @default(false)
-  userId         String   @unique
-  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                  String     @id @default(uuid())
+  companyName         String
+  contactPerson       String
+  phone               String
+  companyAddress      String
+  edrpou              String     @unique
+  verificationDoc     String
+  certificationDoc    String?
+  acceptTerms         Boolean    @default(false)
+  userId              String     @unique
+  user                User       @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model CarrierProfile {
-  id             String   @id @default(uuid())
-  companyName    String   
-  edrpou         String   @unique 
-  vehicleDetails String   
-  phone          String
-  locations      String   
-  acceptTerms    Boolean  @default(false)
-  userId         String   @unique
-  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                   String      @id @default(uuid())
+  companyName          String  
+  contactPerson        String 
+  phone                String
+  edrpou               String      @unique 
+  vehicleDetails       String  
+  vehicleType          String
+  capacity             String
+  locations            String   
+  driverLicense        String
+  technicalPassport    String
+  isLeased             Boolean?
+  acceptTerms          Boolean     @default(false)
+  userId               String      @unique
+  user                 User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model LeaseDetails {
+  id                String      @id @default(uuid())
+  lessorName        DateTime    @default(now())
+  contractNumber    DateTime
+  expiryDate        String
+  leaseAgreement    String
+  userId            String
+  user              User        @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model RefreshToken {
-  id        String   @id @default(uuid())
-  createdAt DateTime @default(now())
-  expiresAt DateTime
-  token     String
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id           String      @id @default(uuid())
+  createdAt    DateTime    @default(now())
+  expiresAt    DateTime
+  token        String
+  userId       String
+  user         User        @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model UserSocial {
@@ -100,114 +120,114 @@ model UserSocial {
 }
 
 model AuditLog {
-  id        String   @id @default(uuid())
-  action    String
-  createdAt DateTime @default(now())
-  ipAddress String?
-  userAgent String?
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id           String      @id @default(uuid())
+  action       String
+  createdAt    DateTime    @default(now())
+  ipAddress    String?
+  userAgent    String?
+  userId       String
+  user         User        @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model ResetPassword {
-  id        String   @id @default(uuid())
-  createdAt DateTime @default(now())
-  expiresAt DateTime
-  tokenHash String
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id           String      @id @default(uuid())
+  createdAt    DateTime    @default(now())
+  expiresAt    DateTime
+  tokenHash    String
+  userId       String
+  user         User        @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Product {
-  id          String      @id @default(uuid())
-  name        String
-  description String?
-  price       Decimal
-  stock       Int
-  sku         String      @unique
-  isActive    Boolean     @default(true)
-  imageUrl    String?
-  categoryId  String
-  category    Category    @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
-  cartItems   CartItem[]
-  orderItems  OrderItem[]
+  id             String         @id @default(uuid())
+  name           String
+  description    String?
+  price          Decimal
+  stock          Int
+  sku            String         @unique
+  isActive       Boolean        @default(true)
+  imageUrl       String?
+  categoryId     String
+  category       Category       @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  cartItems      CartItem[]
+  orderItems     OrderItem[]
 }
 
 model Category {
-  id          String    @id @default(uuid())
-  name        String
-  description String?
-  status      String?
-  slug        String    @unique
-  imageUrl    String?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  products    Product[]
+  id             String       @id @default(uuid())
+  name           String
+  description    String?
+  status         String?
+  slug           String       @unique
+  imageUrl       String?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  products       Product[]
 }
 
 model Order {
-  id              String      @id @default(uuid())
-  orderNumber     String      @unique
-  status          String?
-  totalAmount     Decimal
-  userId          String
-  user            User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  cartId          String
-  cart            Cart        @relation(fields: [cartId], references: [id], onDelete: Cascade)
-  shippingAddress String?
-  createdAt       DateTime    @default(now())
-  updatedAt       DateTime    @updatedAt
-  orderItems      OrderItem[]
-  payments        Payment[]
+  id                 String         @id @default(uuid())
+  orderNumber        String         @unique
+  status             String?
+  totalAmount        Decimal
+  userId             String
+  user               User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  cartId             String
+  cart               Cart           @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  shippingAddress    String?
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
+  orderItems         OrderItem[]
+  payments           Payment[]
 }
 
 model Cart {
-  id         String     @id @default(uuid())
-  userId     String     @unique
-  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  checkedOut Boolean    @default(false)
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
-  cartItems  CartItem[]
-  orders     Order[]
+  id            String        @id @default(uuid())
+  userId        String        @unique
+  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  checkedOut    Boolean       @default(false)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  cartItems     CartItem[]
+  orders        Order[]
 }
 
 model CartItem {
-  id        String   @id @default(uuid())
-  quantity  Int
-  cartId    String
-  cart      Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
-  productId String
-  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id           String      @id @default(uuid())
+  quantity     Int
+  cartId       String
+  cart         Cart        @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  productId    String
+  product      Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
 }
 
 model OrderItem {
-  id        String   @id @default(uuid())
-  quantity  Int
-  price     Decimal
-  orderId   String
-  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  productId String
-  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id           String      @id @default(uuid())
+  quantity     Int
+  price        Decimal
+  orderId      String
+  order        Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId    String
+  product      Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
 }
 
 model Payment {
-  id            String   @id @default(uuid())
-  amount        Decimal
-  status        String?
-  currency      String   @default("UAH")
-  paymentMethod String?
-  transactionId String?
-  orderId       String
-  order         Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  userId        String
-  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id               String      @id @default(uuid())
+  amount           Decimal
+  status           String?
+  currency         String      @default("UAH")
+  paymentMethod    String?
+  transactionId    String?
+  orderId          String
+  order            Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  userId           String
+  user             User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
 }
