@@ -111,4 +111,4 @@ DATABASE_URL=postgresql://neondb_owner:npg_sD4fXhvT9GyR@ep-little-surf-a18vye4s-
 PORT=3001
 ```
 
-## 📖 Робота зі Swagger OpenAI:
+## 📖 Робота зі Swagger OpenAPI:
