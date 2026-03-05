@@ -29,7 +29,7 @@ export class CreateUserDto {
   @Length(2, 20, {
     message: 'Довжина нікнейму користувача повинна бути від 2 до 20 символів',
   })
-  userName: string;
+  username: string;
 
   @IsString({ message: 'Номер мобільного телефона повинен бути рядком' })
   @Length(6, 20, {

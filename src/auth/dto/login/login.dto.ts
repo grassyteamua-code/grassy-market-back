@@ -1,4 +1,9 @@
+import { IsString } from 'class-validator';
+
 export class LoginDto {
-  email: string;
+  @IsString({ message: 'Пароль користувача повинен бути рядком' })
   password: string;
+
+  @IsString({ message: "Ім'я користувача повинно бути рядком" })
+  username: string;
 }
