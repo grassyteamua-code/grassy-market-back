@@ -21,9 +21,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload: JwtPayload) {
+  async validate(jwtPayload: JwtPayload) {
     const user: User = await this.userService
-      .findById(payload.id)
+      .findById(jwtPayload.id)
       .catch((error) => {
         this.logger.error(
           `Помилка при пошуку користувача за JWT payload:`,
