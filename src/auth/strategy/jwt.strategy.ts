@@ -34,7 +34,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
     if (!user) {
       throw new UnauthorizedException(
-        `Користувач з id ${payload.id} не знайдений`,
+        `Користувач з id ${jwtPayload.id} не знайдений`,
       );
     }
 

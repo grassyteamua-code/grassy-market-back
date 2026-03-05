@@ -10,6 +10,7 @@ import {
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from '@prisma/client';
+import { Public } from '../auth/guards/jwt-auth.guards';
 
 @Controller('user')
 export class UserController {
@@ -27,9 +28,10 @@ export class UserController {
 
   @Get('find-one/:id')
   findOne(@Param('id') id: string) {
-    return this.userService.findOne(+id);
+    return this.userService.findById(id);
   }
 
+  @Public()
   @Get('find-by-username/:username')
   async findByUsername(@Param('username') username: string): Promise<User> {
     const user: User = await this.userService.findByUsername(username);
