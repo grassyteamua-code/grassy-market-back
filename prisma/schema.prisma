@@ -17,14 +17,13 @@ model User {
   username          String            @unique
   email             String            @unique
   password          String
-  passwordRepeat    String            @map("password_repeat")
   firstName         String            @map("first_name")
   middleName        String            @map("middle_name")
   lastName          String            @map("last_name")
   mobilephone       String
   role              Role[]            @default([SELLER])
   status            String
-  buyerProfile      BayerProfile?
+  buyerProfile      BuyerProfile?
   carrierProfile    CarrierProfile?
   sellerProfile     SellerProfile?
   createdAt         DateTime          @default(now()) @map("created_at")
@@ -36,39 +35,43 @@ model User {
   carts             Cart[]
   orders            Order[]
   payments          Payment[]
-  leaseDetails      LeaseDetails[]
   tokens            Token[]
+  transactions      Transaction[]
 
   @@map("users")
-  transactions Transaction[]
+
 }
 
 model SellerProfile {
   id                  String     @id @default(uuid())
   companyName         String     @map("company_name ")
-  contactPerson       String     @map("contact_person")
+  firstName           String     @map("fisrt_name")
+  lastName            String     @map("last_name")
+  middleName          String?    @map("middle_тame")
   phone               String  
   companyAddress      String     @map("company_address")
   edrpou              String     @unique
   verificationDoc     String     @map("verification_doc")
   certificationDoc    String?    @map("certification_doc")
-  acceptTerms         Boolean    @default(false)
+  acceptTerms         Boolean    @default(false)               @map("accept_terms")
   userId              String     @unique
   user                User       @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("sellers_profiles")
 }
 
-model BayerProfile {
+model BuyerProfile {
   id                  String     @id @default(uuid())
   companyName         String     @map("company_name")
-  contactPerson       String     @map("contact_person")
+  firstName           String     @map("fisrt_name")
+  lastName            String     @map("last_name")
+  middleName          String?    @map("middle_тame")
   phone               String
   companyAddress      String     @map("company_address")
   edrpou              String     @unique
   verificationDoc     String     @map("verification_doc")
   certificationDoc    String?    @map("certification_doc")
-  acceptTerms         Boolean    @default(false)
+  acceptTerms         Boolean    @default(false)               @map("accept_terms")
   userId              String     @unique
   user                User       @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -78,13 +81,15 @@ model BayerProfile {
 model CarrierProfile {
   id                   String      @id @default(uuid())
   companyName          String      @map("company_name")
-  contactPerson        String      @map("contact_person")
+  firstName            String      @map("fisrt_name")
+  lastName             String      @map("last_name")
+  middleName           String?     @map("middle_тame")
   phone                String
   edrpou               String      @unique 
   vehicleDetails       String      @map("vehicle_details")
   vehicleType          String      @map("vehicle_type")
-  capacity             String      
-  locations            String      
+  capacity             Float       @map("capacity")      
+  locations            String[]    @map("locations")      
   driverLicense        String      @map("driver_license")
   technicalPassport    String      @map("technical_passport")
   isLeased             Boolean?    @map("is_leased")
@@ -93,16 +98,17 @@ model CarrierProfile {
   user                 User        @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("carrier_profiles")
+  leaseDetails LeaseDetails[]
 }
 
 model LeaseDetails {
-  id                String      @id @default(uuid())
-  lessorName        DateTime    @default(now())            @map("lessor_name")
-  contractNumber    DateTime    @map("contract_number")
-  expiryDate        String      @map("expiry_date")
-  leaseAgreement    String      @map("lease_agreement")
-  userId            String
-  user              User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                String             @id @default(uuid())
+  lessorName        String             @map("lessor_name")
+  contractNumber    String             @map("contract_number")
+  expiryDate        String             @map("expiry_date")
+  leaseAgreement    String             @map("lease_agreement")
+  carrierProfileId  String
+  carrierProfile    CarrierProfile     @relation(fields: [carrierProfileId], references: [id], onDelete: Cascade)
 
   @@map("lease_details")
 }
