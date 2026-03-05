@@ -21,7 +21,7 @@ export class UserController {
     return this.userService.create(createUserDto);
   }
 
-  @Get()
+  @Get('find-all')
   findAll() {
     return this.userService.findAll();
   }
@@ -50,8 +50,8 @@ export class UserController {
     return user;
   }
 
-  @Get('find-by-email/:email')
-  async findByPhone(@Param('email') phone: string) {
+  @Get('find-by-phone/:phone')
+  async findByPhone(@Param('phone') phone: string) {
     const user: User = await this.userService.findByPhone(phone);
 
     delete (user as Record<string, unknown>).phone;
@@ -59,7 +59,7 @@ export class UserController {
     return user;
   }
 
-  @Patch('updaete/:id')
+  @Patch('update/:id')
   update(@Param('id') id: string) {
     return this.userService.update(+id);
   }
