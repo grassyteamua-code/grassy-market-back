@@ -7,11 +7,10 @@ CREATE TABLE "users" (
     "username" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "password" TEXT NOT NULL,
-    "password_repeat" TEXT NOT NULL,
     "first_name" TEXT NOT NULL,
     "middle_name" TEXT NOT NULL,
     "last_name" TEXT NOT NULL,
-    "mobilephone" TEXT NOT NULL,
+    "phone" TEXT NOT NULL,
     "role" "Role"[] DEFAULT ARRAY['SELLER']::"Role"[],
     "status" TEXT NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -24,13 +23,15 @@ CREATE TABLE "users" (
 CREATE TABLE "sellers_profiles" (
     "id" TEXT NOT NULL,
     "company_name " TEXT NOT NULL,
-    "contact_person" TEXT NOT NULL,
+    "fisrt_name" TEXT NOT NULL,
+    "last_name" TEXT NOT NULL,
+    "middle_тame" TEXT,
     "phone" TEXT NOT NULL,
     "company_address" TEXT NOT NULL,
     "edrpou" TEXT NOT NULL,
     "verification_doc" TEXT NOT NULL,
     "certification_doc" TEXT,
-    "acceptTerms" BOOLEAN NOT NULL DEFAULT false,
+    "accept_terms" BOOLEAN NOT NULL DEFAULT false,
     "userId" TEXT NOT NULL,
 
     CONSTRAINT "sellers_profiles_pkey" PRIMARY KEY ("id")
@@ -40,13 +41,15 @@ CREATE TABLE "sellers_profiles" (
 CREATE TABLE "buyers_profiles" (
     "id" TEXT NOT NULL,
     "company_name" TEXT NOT NULL,
-    "contact_person" TEXT NOT NULL,
+    "fisrt_name" TEXT NOT NULL,
+    "last_name" TEXT NOT NULL,
+    "middle_тame" TEXT,
     "phone" TEXT NOT NULL,
     "company_address" TEXT NOT NULL,
     "edrpou" TEXT NOT NULL,
     "verification_doc" TEXT NOT NULL,
     "certification_doc" TEXT,
-    "acceptTerms" BOOLEAN NOT NULL DEFAULT false,
+    "accept_terms" BOOLEAN NOT NULL DEFAULT false,
     "userId" TEXT NOT NULL,
 
     CONSTRAINT "buyers_profiles_pkey" PRIMARY KEY ("id")
@@ -56,13 +59,15 @@ CREATE TABLE "buyers_profiles" (
 CREATE TABLE "carrier_profiles" (
     "id" TEXT NOT NULL,
     "company_name" TEXT NOT NULL,
-    "contact_person" TEXT NOT NULL,
+    "fisrt_name" TEXT NOT NULL,
+    "last_name" TEXT NOT NULL,
+    "middle_тame" TEXT,
     "phone" TEXT NOT NULL,
     "edrpou" TEXT NOT NULL,
     "vehicle_details" TEXT NOT NULL,
     "vehicle_type" TEXT NOT NULL,
-    "capacity" TEXT NOT NULL,
-    "locations" TEXT NOT NULL,
+    "capacity" DOUBLE PRECISION NOT NULL,
+    "locations" TEXT[],
     "driver_license" TEXT NOT NULL,
     "technical_passport" TEXT NOT NULL,
     "is_leased" BOOLEAN,
@@ -75,11 +80,11 @@ CREATE TABLE "carrier_profiles" (
 -- CreateTable
 CREATE TABLE "lease_details" (
     "id" TEXT NOT NULL,
-    "lessor_name" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "contract_number" TIMESTAMP(3) NOT NULL,
+    "lessor_name" TEXT NOT NULL,
+    "contract_number" TEXT NOT NULL,
     "expiry_date" TEXT NOT NULL,
     "lease_agreement" TEXT NOT NULL,
-    "userId" TEXT NOT NULL,
+    "carrierProfileId" TEXT NOT NULL,
 
     CONSTRAINT "lease_details_pkey" PRIMARY KEY ("id")
 );
@@ -308,7 +313,7 @@ ALTER TABLE "buyers_profiles" ADD CONSTRAINT "buyers_profiles_userId_fkey" FOREI
 ALTER TABLE "carrier_profiles" ADD CONSTRAINT "carrier_profiles_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "lease_details" ADD CONSTRAINT "lease_details_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "lease_details" ADD CONSTRAINT "lease_details_carrierProfileId_fkey" FOREIGN KEY ("carrierProfileId") REFERENCES "carrier_profiles"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "refresh_tokens" ADD CONSTRAINT "refresh_tokens_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
