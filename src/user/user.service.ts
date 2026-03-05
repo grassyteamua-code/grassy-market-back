@@ -28,6 +28,9 @@ export class UserService {
       password: hashedPassword,
       passwordRepeat: hashedPassword,
       status: 'active',
+      firstName: createUserDto.firstname,
+      lastName: createUserDto.lastname,
+      middleName: createUserDto.middlename,
     };
 
     const existingUserByUsername = await this.findByUsername(
@@ -97,7 +100,7 @@ export class UserService {
           `Помилка при пошуку користувача за його ID: ${id}`,
           error,
         );
-        throw new NotFoundException('Користувач') 
+        throw new NotFoundException('Користувач');
       });
   }
 

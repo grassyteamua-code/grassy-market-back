@@ -41,11 +41,17 @@ export class CreateUserDto {
   @Length(2, 50, {
     message: 'Довжина імені користувача повинна бути від 2 до 50 символів',
   })
-  firstName: string;
+  firstname: string;
 
   @IsString({ message: 'Прізвище користувача повинно бути рядком' })
   @Length(2, 50, {
     message: 'Довжина прізвища повинна бути від 2 до 50 символів',
   })
-  lastName: string;
+  lastname: string;
+
+  @IsString({ message: 'По-батькові користувача повинно бути рядком' })
+  @Length(2, 50, {
+    message: 'Довжина по-батькові повинна бути від 2 до 50 символів',
+  })
+  middlename: string;
 }
