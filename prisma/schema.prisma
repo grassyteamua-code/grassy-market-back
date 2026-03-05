@@ -36,106 +36,124 @@ model User {
   carts             Cart[]
   orders            Order[]
   payments          Payment[]
+  leaseDetails      LeaseDetails[]
+  tokens Token[]
 
-  leaseDetails LeaseDetails[]
+  @@map("users")
 }
 
 model SellerProfile {
   id                  String     @id @default(uuid())
-  companyName         String
-  contactPerson       String
+  companyName         String     @map("company_name ")
+  contactPerson       String     @map("contact_person")
   phone               String  
-  companyAddress      String
+  companyAddress      String     @map("company_address")
   edrpou              String     @unique
-  verificationDoc     String
-  certificationDoc    String?    
+  verificationDoc     String     @map("verification_doc")
+  certificationDoc    String?    @map("certification_doc")
   acceptTerms         Boolean    @default(false)
   userId              String     @unique
   user                User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sellers_profiles")
 }
 
 model BayerProfile {
   id                  String     @id @default(uuid())
-  companyName         String
-  contactPerson       String
+  companyName         String     @map("company_name")
+  contactPerson       String     @map("contact_person")
   phone               String
-  companyAddress      String
+  companyAddress      String     @map("company_address")
   edrpou              String     @unique
-  verificationDoc     String
-  certificationDoc    String?
+  verificationDoc     String     @map("verification_doc")
+  certificationDoc    String?    @map("certification_doc")
   acceptTerms         Boolean    @default(false)
   userId              String     @unique
   user                User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("buyers_profiles")
 }
 
 model CarrierProfile {
   id                   String      @id @default(uuid())
-  companyName          String  
-  contactPerson        String 
+  companyName          String      @map("company_name")
+  contactPerson        String      @map("contact_person")
   phone                String
   edrpou               String      @unique 
-  vehicleDetails       String  
-  vehicleType          String
-  capacity             String
-  locations            String   
-  driverLicense        String
-  technicalPassport    String
-  isLeased             Boolean?
-  acceptTerms          Boolean     @default(false)
+  vehicleDetails       String      @map("vehicle_details")
+  vehicleType          String      @map("vehicle_type")
+  capacity             String      
+  locations            String      
+  driverLicense        String      @map("driver_license")
+  technicalPassport    String      @map("technical_passport")
+  isLeased             Boolean?    @map("is_leased")
+  acceptTerms          Boolean     @default(false) @map("accept_terms")
   userId               String      @unique
   user                 User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("carrier_profiles")
 }
 
 model LeaseDetails {
   id                String      @id @default(uuid())
-  lessorName        DateTime    @default(now())
-  contractNumber    DateTime
-  expiryDate        String
-  leaseAgreement    String
+  lessorName        DateTime    @default(now())            @map("lessor_name")
+  contractNumber    DateTime    @map("contract_number")
+  expiryDate        String      @map("expiry_date")
+  leaseAgreement    String      @map("lease_agreement")
   userId            String
   user              User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("lease_details")
 }
 
 model RefreshToken {
   id           String      @id @default(uuid())
-  createdAt    DateTime    @default(now())
-  expiresAt    DateTime
+  createdAt    DateTime    @default(now())          @map("created_at")
+  expiresAt    DateTime    @map("expires_at")
   token        String
   userId       String
   user         User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("refresh_tokens")
 }
 
 model UserSocial {
   id             String    @id @default(uuid())
-  accessToken    String?
-  createdAt      DateTime  @default(now())
+  accessToken    String?   @map("access_token")
+  createdAt      DateTime  @default(now())  @map("created_at")
   email          String?
-  isLinked       Int?
+  isLinked       Int?      @map("is_linked")
   provider       String?
-  refreshToken   String?
-  tokenExpiresAt DateTime?
+  refreshToken   String?   @map("refresh_token")
+  tokenExpiresAt DateTime? @map("token_expires_at")
   updatedAt      DateTime  @updatedAt
   userId         String
   user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_socials")
 }
 
 model AuditLog {
   id           String      @id @default(uuid())
   action       String
-  createdAt    DateTime    @default(now())
-  ipAddress    String?
-  userAgent    String?
+  createdAt    DateTime    @default(now())       @map("created_at")
+  ipAddress    String?     @map("ip_address")
+  userAgent    String?     @map("user_agent")
   userId       String
   user         User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("audit_logs")
 }
 
 model ResetPassword {
   id           String      @id @default(uuid())
-  createdAt    DateTime    @default(now())
-  expiresAt    DateTime
-  tokenHash    String
+  createdAt    DateTime    @default(now())      @map("created_at")
+  expiresAt    DateTime    @map("expires_at")
+  tokenHash    String      @map("token_hash")
   userId       String
   user         User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("reset_passwords")
 }
 
 model Product {
@@ -145,14 +163,16 @@ model Product {
   price          Decimal
   stock          Int
   sku            String         @unique
-  isActive       Boolean        @default(true)
-  imageUrl       String?
-  categoryId     String
+  isActive       Boolean        @default(true) @map("is_active")
+  imageUrl       String?        @map("image_url")
+  categoryId     String         
   category       Category       @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @updatedAt
+  createdAt      DateTime       @default(now()) @map("created_at")
+  updatedAt      DateTime       @updatedAt    @map("updated_at")
   cartItems      CartItem[]
   orderItems     OrderItem[]
+
+  @@map("products")
 }
 
 model Category {
@@ -161,37 +181,43 @@ model Category {
   description    String?
   status         String?
   slug           String       @unique
-  imageUrl       String?
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
+  imageUrl       String?      @map("image_url")
+  createdAt      DateTime     @default(now()) @map("created_at")
+  updatedAt      DateTime     @updatedAt  @map("updated_at")
   products       Product[]
+
+  @@map("categories")
 }
 
 model Order {
   id                 String         @id @default(uuid())
-  orderNumber        String         @unique
+  orderNumber        String         @unique      @map("order_number")
   status             String?
-  totalAmount        Decimal
+  totalAmount        Decimal        @map("total_amount")
   userId             String
   user               User           @relation(fields: [userId], references: [id], onDelete: Cascade)
   cartId             String
   cart               Cart           @relation(fields: [cartId], references: [id], onDelete: Cascade)
-  shippingAddress    String?
-  createdAt          DateTime       @default(now())
-  updatedAt          DateTime       @updatedAt
+  shippingAddress    String?        @map("shipping_address")
+  createdAt          DateTime       @default(now()) @map("created_at")
+  updatedAt          DateTime       @updatedAt    @map("updated_at")
   orderItems         OrderItem[]
   payments           Payment[]
+
+  @@map("orders")
 }
 
 model Cart {
   id            String        @id @default(uuid())
   userId        String        @unique
   user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  checkedOut    Boolean       @default(false)
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
+  checkedOut    Boolean       @default(false) @map("checked_out")
+  createdAt     DateTime      @default(now()) @map("created_at")
+  updatedAt     DateTime      @updatedAt  @map("updated_at")
   cartItems     CartItem[]
   orders        Order[]
+
+  @@map("carts")
 }
 
 model CartItem {
@@ -201,8 +227,10 @@ model CartItem {
   cart         Cart        @relation(fields: [cartId], references: [id], onDelete: Cascade)
   productId    String
   product      Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
+  createdAt    DateTime    @default(now()) @map("created_at")
+  updatedAt    DateTime    @updatedAt   @map("updated_at")
+
+  @@map("cart_items")
 }
 
 model OrderItem {
@@ -213,8 +241,10 @@ model OrderItem {
   order        Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
   productId    String
   product      Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
+  createdAt    DateTime    @default(now()) @map("created_at")
+  updatedAt    DateTime    @updatedAt @map("updated_at")
+
+  @@map("order_items")
 }
 
 model Payment {
@@ -222,12 +252,24 @@ model Payment {
   amount           Decimal
   status           String?
   currency         String      @default("UAH")
-  paymentMethod    String?
+  paymentMethod    String?     @map("payment_method")
   transactionId    String?
   orderId          String
   order            Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
   userId           String
   user             User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  createdAt        DateTime    @default(now())
-  updatedAt        DateTime    @updatedAt
+  createdAt        DateTime    @default(now()) @map("created_at")
+  updatedAt        DateTime    @updatedAt    @map("updated_at")
+
+  @@map("payments")
+}
+
+model Token {
+  id String @id @default(uuid())
+  token String @unique
+  expiresAt DateTime @map("expires_at")
+  userId String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("tokens")
 }

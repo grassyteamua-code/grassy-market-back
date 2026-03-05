@@ -3,15 +3,15 @@ import { RegisterDto } from './dto/register/register.dto';
 import { UserService } from '../user/user.service';
 import { LoginDto } from './dto/login/login.dto';
 import { PrismaService } from '../prisma/prisma.service';
-import { TokenService } from '../token/token.service';
 import { User } from '@prisma/client';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
   private readonly logger = new Logger(AuthService.name);
   constructor(
     private readonly userService: UserService,
-    private readonly tokenService: TokenService,
+    private readonly jwtService: JwtService,
     private readonly prismaService: PrismaService,
   ) {}
 
@@ -25,7 +25,7 @@ export class AuthService {
     return createdUser;
   }
 
-  async login(loginDto: LoginDto): Promise<ITokens> {
+  async login(loginDto: LoginDto) {
     const { userName, password } = loginDto;
 
     const user: User = await this.userService
@@ -38,15 +38,22 @@ export class AuthService {
     const isPasswordMatch = user && compareSync(password, user?.password);
 
     if (!user || !isPasswordMatch) {
-      const textError = 'Неверные логин или пароль';
+      const textError =
+        'Недійсний логін або пароль. Будь ласка, спробуйте ввести ще раз.';
       this.logger.error(textError);
       throw new UnauthorizedException(textError);
     }
 
-    return this.tokenService.generateTokens(user);
-  }
+    const accessToken = this.jwt.sign({
+      id: user.id,
+      username: user.username,
+      email: user.email,
+    });
 
-  async deleteRefreshToken(refreshToken: string) {
-    await this.prismaService.token.delete({ where: { token: refreshToken } });
+    const refreshToken = (userId: string) => {
+        
+    }
+
+    return user;
   }
 }

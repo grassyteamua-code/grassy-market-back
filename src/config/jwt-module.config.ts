@@ -1,9 +1,19 @@
-import { JwtModuleAsyncOptions } from "@nestjs/jwt";
+import { ConfigService } from '@nestjs/config';
+import { JwtModuleAsyncOptions, JwtModuleOptions } from '@nestjs/jwt';
+import { StringValue } from 'ms';
 
-export const jwtModuleOptions = (): JwtModuleAsyncOptions => ({
-  inject: [],
-  useFactory: async () => ({
-    secret: process.env.JWT_SECRET,
-    signOptions: { expiresIn: "1d" },
-  }),
+export const jwtModuleOptions = (config: ConfigService): JwtModuleOptions => {
+  const expiresIn: StringValue | number = config.get('JWT_EXPIRES', '5m');
+
+  return {
+    secret: config.get<string>('JWT_SECRET'),
+    signOptions: {
+      expiresIn,
+    },
+  };
+};
+
+export const jwtModuleAsyncOptions = (): JwtModuleAsyncOptions => ({
+  inject: [ConfigService],
+  useFactory: (config: ConfigService) => jwtModuleOptions(config),
 });
