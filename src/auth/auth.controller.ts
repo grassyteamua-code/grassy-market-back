@@ -57,13 +57,22 @@ export class AuthController {
       );
     }
 
+    interface ICookieOptions {
+      httpOnly: boolean;
+      sameSite: 'lax' | 'strict' | 'none';
+      secure: boolean;
+      path: string;
+      expires: Date;
+    }
+
     const cookieName = 'refreshToken';
     const cookieExpectTime = dayjs().add(7, 'days').toDate();
 
-    const cookieOptions = {
+    const cookieOptions: ICookieOptions = {
       httpOnly: true,
       sameSite: 'lax' as const,
       secure: false,
+      path: '/',
       expires: cookieExpectTime,
     };
 
