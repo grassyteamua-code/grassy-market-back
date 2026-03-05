@@ -7,6 +7,7 @@ import {
 import { CreateUserDto } from './dto/create-user.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { hashSync, genSaltSync } from 'bcrypt';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UserService {
@@ -73,10 +74,6 @@ export class UserService {
     delete newUser.password;
 
     return newUser;
-  }
-
-  private hashPassword(password: string): string {
-    return hashSync(password, genSaltSync(10));
   }
 
   findAll() {
@@ -164,11 +161,28 @@ export class UserService {
     }
   }
 
-  update(id: number) {
-    return `This action updates a #${id} user`;
+  async update(id: string, updateUserDto: UpdateUserDto) {
+    return await this.prismaService.user.update({
+      where: { id },
+      data: updateUserDto,
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async remove(id: string) {
+    return await this.prismaService.user
+      .delete({
+        where: { id },
+      })
+      .then((deletedUser) => {
+        return { message: 'Користувач успішно видалений', user: deletedUser };
+      })
+      .catch((error) => {
+        this.logger.error('Користувач не знайдений для видалення.', error);
+        throw new Error(`Користувач не знайдений для видалення: ${error}`);
+      });
+  }
+
+  private hashPassword(password: string): string {
+    return hashSync(password, genSaltSync(10));
   }
 }

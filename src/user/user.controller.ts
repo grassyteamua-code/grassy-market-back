@@ -11,6 +11,7 @@ import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from '@prisma/client';
 import { Public } from '../auth/guards/jwt-auth.guards';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Controller('user')
 export class UserController {
@@ -60,12 +61,12 @@ export class UserController {
   }
 
   @Patch('update/:id')
-  update(@Param('id') id: string) {
-    return this.userService.update(+id);
+  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+    return this.userService.update(id, updateUserDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.userService.remove(+id);
+    return this.userService.remove(id);
   }
 }
