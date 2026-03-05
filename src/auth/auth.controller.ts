@@ -4,12 +4,15 @@ import {
   Controller,
   Logger,
   Post,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register/register.dto';
 import { LoginDto } from './dto/login/login.dto';
 import { error } from 'console';
 import { Public } from './guards/jwt-auth.guards';
+import dayjs from 'dayjs';
+import { Response } from 'express';
 
 @Public()
 @Controller('auth')
@@ -45,5 +48,25 @@ export class AuthController {
     console.log('Токени:', tokens);
 
     return tokens;
+  }
+
+  private setRefreshTokenCookies(refreshToken: string, response: Response) {
+    if (!refreshToken) {
+      throw new UnauthorizedException(
+        'Помилка при встановленні рефреш токена. Будь ласка, спробуйте ще раз.',
+      );
+    }
+
+    const cookieName = 'refreshToken';
+    const cookieExpectTime = dayjs().add(7, 'days').toDate();
+
+    const cookieOptions = {
+      httpOnly: true,
+      sameSite: 'lax' as const,
+      secure: false,
+      expires: cookieExpectTime,
+    };
+
+    response.cookie(cookieName, refreshToken, cookieOptions);
   }
 }
