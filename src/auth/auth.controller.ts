@@ -2,17 +2,20 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Get,
+  HttpStatus,
   Logger,
   Post,
+  Res,
   UnauthorizedException,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register/register.dto';
 import { LoginDto } from './dto/login/login.dto';
-import { error } from 'console';
 import { Public } from './guards/jwt-auth.guards';
 import dayjs from 'dayjs';
-import { Response } from 'express';
+import type { Response } from 'express';
+import { Token } from 'src/token/entities/token.entity';
 
 @Public()
 @Controller('auth')
@@ -26,7 +29,7 @@ export class AuthController {
     const createdUser = await this.authService.register(registerDto);
 
     if (!createdUser) {
-      this.logger.error(error);
+      this.logger.error('Error creating user');
       throw new BadRequestException(
         'Помилка при створенні користувача. Будь ласка, спробуйте ще раз.',
       );
@@ -36,7 +39,7 @@ export class AuthController {
   }
 
   @Post('/login')
-  async login(@Body() loginDto: LoginDto) {
+  async login(@Body() loginDto: LoginDto, @Res() response: Response) {
     const tokens = await this.authService.login(loginDto);
 
     if (!tokens) {
@@ -47,10 +50,24 @@ export class AuthController {
     }
     console.log('Токени:', tokens);
 
+    const { refreshToken, accessToken } = tokens;
+
+    this.setRefreshTokenCookies(refreshToken, response);
+
+    response.status(HttpStatus.CREATED).json({ accessToken });
+
     return tokens;
   }
 
-  private setRefreshTokenCookies(refreshToken: string, response: Response) {
+  @Get('refresh-tokens')
+  refreshTokens(refreshToken) {
+    
+  }
+
+  private setRefreshTokenCookies = (
+    refreshToken: Token,
+    response: Response,
+  ) => {
     if (!refreshToken) {
       throw new UnauthorizedException(
         'Помилка при встановленні рефреш токена. Будь ласка, спробуйте ще раз.',
@@ -62,20 +79,21 @@ export class AuthController {
       sameSite: 'lax' | 'strict' | 'none';
       secure: boolean;
       path: string;
-      expires: Date;
+      exp: Date;
     }
 
     const cookieName = 'refreshToken';
-    const cookieExpectTime = dayjs().add(7, 'days').toDate();
+    const cookieValue: string = refreshToken.token as string;
+    const cookieExpectTime = dayjs().add(7, 'day').toDate();
 
     const cookieOptions: ICookieOptions = {
       httpOnly: true,
-      sameSite: 'lax' as const,
+      sameSite: 'lax',
       secure: false,
       path: '/',
-      expires: cookieExpectTime,
+      exp: cookieExpectTime,
     };
 
-    response.cookie(cookieName, refreshToken, cookieOptions);
-  }
+    response.cookie(cookieName, cookieValue, cookieOptions);
+  };
 }

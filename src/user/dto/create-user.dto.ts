@@ -13,7 +13,13 @@ export class CreateUserDto {
       message: 'Будь ласка, введіть адресу Вашої електронної скриньки',
     },
   )
-  email: string;
+  email!: string;
+
+  @IsString({ message: 'Нікнейм користувача повинно бути рядком' })
+  @Length(2, 20, {
+    message: 'Довжина нікнейму користувача повинна бути від 2 до 20 символів',
+  })
+  username!: string;
 
   @IsStrongPassword(
     {},
@@ -23,35 +29,39 @@ export class CreateUserDto {
     },
   )
   @MinLength(8, { message: 'Пароль повинен містити мінімум 8 символів' })
-  password: string;
+  password!: string;
 
-  @IsString({ message: 'Нікнейм користувача повинно бути рядком' })
-  @Length(2, 20, {
-    message: 'Довжина нікнейму користувача повинна бути від 2 до 20 символів',
-  })
-  username: string;
+  @IsStrongPassword(
+    {},
+    {
+      message:
+        'Пароль повинен містити цифри, великі та малі літери, а також спеціальні символи',
+    },
+  )
+  @MinLength(8, { message: 'Пароль повинен містити мінімум 8 символів' })
+  repeatPassword!: string;
 
   @IsString({ message: 'Номер мобільного телефона повинен бути рядком' })
   @Length(6, 20, {
     message: 'Довжина номера телефона повинна бути від 6 до 20 символів',
   })
-  phone: string;
+  phone!: string;
 
   @IsString({ message: "Ім'я користувача повинно бути рядком" })
   @Length(2, 50, {
     message: 'Довжина імені користувача повинна бути від 2 до 50 символів',
   })
-  firstname: string;
+  firstName!: string;
 
   @IsString({ message: 'Прізвище користувача повинно бути рядком' })
   @Length(2, 50, {
     message: 'Довжина прізвища повинна бути від 2 до 50 символів',
   })
-  lastname: string;
+  lastName!: string;
 
   @IsString({ message: 'По-батькові користувача повинно бути рядком' })
   @Length(2, 50, {
     message: 'Довжина по-батькові повинна бути від 2 до 50 символів',
   })
-  middlename: string;
+  middleName!: string;
 }

@@ -65,6 +65,10 @@ export class AuthService {
     return result;
   }
 
+  refreshTokens() {
+    return null;
+  }
+
   private getRefreshToken = async (userId: string): Promise<any> => {
     const currentDate = dayjs();
     const expireDate = currentDate
@@ -77,7 +81,7 @@ export class AuthService {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     return await this.prismaService.token.create({
       data: {
-        token: v4() as string,
+        token: v4(),
         exp: expireDate,
         userId,
       },

@@ -6,7 +6,7 @@ import {
   IsStrongPassword,
   Validate,
 } from 'class-validator';
-import { MatchPasswordConstraint } from 'src/decorators/match-password.constrains';
+import { MatchPasswordConstraint } from 'src/constrains/match-password.constrains';
 
 export class RegisterDto {
   @IsEmail(
@@ -45,6 +45,16 @@ export class RegisterDto {
   repeatPassword!: string;
 
   @IsString({
+    message: 'Будь ласка, введіть Ваш номер мобільного телефону',
+  })
+  @Length(2, 50, {
+    message:
+      'Ваш номер мобільного телефону повинен містити Київстар: (067),(068),(096),(097),(098) Водафон: (050),(066),(099), ЛайфСелл: (063), (073) та 7 цифр після коду оператора',
+  })
+  mobilephone!: string;
+  phone: string;
+
+  @IsString({
     message: 'Будь ласка, введіть Ваше імя',
   })
   @Length(2, 50, {
@@ -57,26 +67,16 @@ export class RegisterDto {
   })
   @Length(2, 50, {
     message:
-      'Ваше по-батькові повинно бути строкою, а не будь-якими іншими символами',
+      'Ваше прізвище повинно бути строкою, а не будь-якими іншими символами',
   })
-  middleName!: string;
+  lastName!: string;
 
   @IsString({
     message: 'Будь ласка, введіть Ваше по-батькові',
   })
   @Length(2, 50, {
     message:
-      'Ваше прізвище повинно бути строкою, а не будь-якими іншими символами',
+      'Ваше по-батькові повинно бути строкою, а не будь-якими іншими символами',
   })
-  lastName!: string;
-
-  @IsString({
-    message: 'Будь ласка, введіть Ваш номер мобільного телефону',
-  })
-  @Length(2, 50, {
-    message:
-      'Ваш номер мобільного телефону повинен містити Київстар: (067),(068),(096),(097),(098) Водафон: (050),(066),(099), ЛайфСелл: (063), (073) та 7 цифр після коду оператора',
-  })
-  mobilephone!: string;
-  phone: string;
+  middleName!: string;
 }
