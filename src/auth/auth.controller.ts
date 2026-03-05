@@ -1,45 +1,23 @@
-import { Body, ConflictException, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register/register.dto';
-import { UserService } from 'src/user/user.service';
-import { User } from 'src/user/entities/user.entity';
+import { LoginDto } from './dto/login/login.dto';
 
 @Controller('auth')
 export class AuthController {
-  constructor(
-    private readonly authService: AuthService,
-    private readonly userService: UserService,
-  ) {}
+  constructor(private readonly authService: AuthService) {}
 
   @Post('/register')
   register(@Body() registerDto: RegisterDto) {
-    const existingUserByUsername: User = this.userService.findByUsername(
-      registerDto.username,
-    );
-    console.log('Existing user by username:', existingUserByUsername);
+    const createdUser = this.authService.register(registerDto);
 
-    if (existingUserByUsername) {
-      throw new ConflictException(
-        "Користувач з таким ім'ям користувача (нікнеймом) вже існує",
-      );
-    }
-
-    const existingUserByEmail: User = this.userService.findByEmail(
-      registerDto.email,
-    );
-    console.log('Existing user by email:', existingUserByEmail);
-
-    if (existingUserByEmail) {
-      throw new ConflictException(
-        "Користувач з таким ім'ям користувача (нікнеймом) вже існує",
-      );
-    }
-
-    return this.authService.register(registerDto);
+    return createdUser;
   }
 
   @Post('/login')
-  login() {
-    return 'login';
+  login(@Body() loginDto: LoginDto) {
+    console.log('Login DTO:', loginDto);
+
+    return loginDto;
   }
 }

@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
+import { User } from '@prisma/client';
 
 @Controller('user')
 export class UserController {
@@ -30,18 +31,30 @@ export class UserController {
   }
 
   @Get('find-by-username/:username')
-  findByUsername(@Param('username') username: string) {
-    return this.userService.findByUsername(username);
+  async findByUsername(@Param('username') username: string): Promise<User> {
+    const user: User = await this.userService.findByUsername(username);
+
+    delete (user as Record<string, unknown>).password;
+
+    return user;
   }
 
   @Get('find-by-email/:email')
-  findByEmail(@Param('email') email: string) {
-    return this.userService.findByEmail(email);
+  async findByEmail(@Param('email') email: string): Promise<User> {
+    const user: User = await this.userService.findByEmail(email);
+
+    delete (user as Record<string, unknown>).email;
+
+    return user;
   }
 
   @Get('find-by-email/:email')
-  findByPhone(@Param('email') phone: string) {
-    return this.userService.findByEmail(phone);
+  async findByPhone(@Param('email') phone: string) {
+    const user: User = await this.userService.findByPhone(phone);
+
+    delete (user as Record<string, unknown>).phone;
+
+    return user;
   }
 
   @Patch('updaete/:id')
