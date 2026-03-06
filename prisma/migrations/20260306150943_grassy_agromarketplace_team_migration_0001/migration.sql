@@ -264,6 +264,16 @@ CREATE TABLE "transactions" (
     CONSTRAINT "transactions_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "password_reset_tokens" (
+    "id" TEXT NOT NULL,
+    "token" TEXT NOT NULL,
+    "expiresAt" TIMESTAMP(3) NOT NULL,
+    "userId" TEXT NOT NULL,
+
+    CONSTRAINT "password_reset_tokens_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "users_username_key" ON "users"("username");
 
@@ -302,6 +312,9 @@ CREATE UNIQUE INDEX "carts_userId_key" ON "carts"("userId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "tokens_token_key" ON "tokens"("token");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "password_reset_tokens_token_key" ON "password_reset_tokens"("token");
 
 -- AddForeignKey
 ALTER TABLE "sellers_profiles" ADD CONSTRAINT "sellers_profiles_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -365,3 +378,6 @@ ALTER TABLE "transactions" ADD CONSTRAINT "transactions_userId_fkey" FOREIGN KEY
 
 -- AddForeignKey
 ALTER TABLE "transactions" ADD CONSTRAINT "transactions_paymentId_fkey" FOREIGN KEY ("paymentId") REFERENCES "payments"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "password_reset_tokens" ADD CONSTRAINT "password_reset_tokens_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
