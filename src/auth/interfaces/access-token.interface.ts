@@ -1,4 +1,4 @@
-import { Role } from '../../user/interfaces/interfaces';
+import { Role } from '@prisma/client';
 
 export interface IAccessToken {
   userId: string;
@@ -7,4 +7,4 @@ export interface IAccessToken {
   role: Role[];
 }
 
-export type JwtPayload = IAccessToken;
+export type JWTPayload = IAccessToken;

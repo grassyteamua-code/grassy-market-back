@@ -6,7 +6,7 @@ import {
   IsStrongPassword,
   Validate,
 } from 'class-validator';
-import { MatchPasswordConstraint } from 'src/constrains/match-password.constrains';
+import { MatchPasswordConstraint } from '@auth/validators/match-password.constrains';
 
 export class RegisterDto {
   @IsEmail(
@@ -51,7 +51,7 @@ export class RegisterDto {
     message:
       'Ваш номер мобільного телефону повинен містити Київстар: (067),(068),(096),(097),(098) Водафон: (050),(066),(099), ЛайфСелл: (063), (073) та 7 цифр після коду оператора',
   })
-  mobilephone!: string;
+  phone!: string;
 
   @IsString({
     message: 'Будь ласка, введіть Ваше імя',
