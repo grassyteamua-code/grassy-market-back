@@ -11,7 +11,7 @@ async function bootstrap() {
 
   app.enableCors(corsOptions);
   app.setGlobalPrefix('api');
-  app.use(cookieParser);
+  app.use(cookieParser());
   app.useGlobalPipes(new ValidationPipe());
 
   Logger.log(`Сервер було запущено на порту: ${PORT}`);

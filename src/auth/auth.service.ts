@@ -60,9 +60,9 @@ export class AuthService {
     });
 
     const refreshToken = this.getRefreshToken(user.id);
-    const result = { accessToken, refreshToken };
+    const tokens = { accessToken, refreshToken };
 
-    return result;
+    return tokens;
   }
 
   async refreshTokens(refreshToken: string) {
@@ -71,6 +71,19 @@ export class AuthService {
         token: refreshToken,
       },
     });
+
+    const today = dayjs();
+    const expireDate = dayjs(token.exripes);
+    const isExpired = expireDate.isBefore(today.toDate());
+
+    if (!token.expires || !isExpired) {
+      throw new UnauthorizedException('Недійсний токен оновлення.');
+    }
+    console.log("Токен оновлення дійсний", token);
+
+    const user = await this.userService.findById(token.userId);
+
+    return this.genarateTokens(user);
   }
 
   private getRefreshToken = async (userId: string): Promise<any> => {

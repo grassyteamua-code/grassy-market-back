@@ -20,6 +20,7 @@ import { Cookies } from 'src/decorators/cookies.decorator';
 import { ICookieOptions } from './interfaces/cookie-options.interface';
 
 const REFRESH_TOKEN = 'refreshToken';
+
 @Public()
 @Controller('auth')
 export class AuthController {
@@ -56,10 +57,6 @@ export class AuthController {
     const { refreshToken, accessToken } = tokens;
 
     this.setRefreshTokenCookies(await refreshToken, response);
-
-    response.status(HttpStatus.CREATED).json({ accessToken });
-
-    return tokens;
   }
 
   @Get('refresh-tokens')
@@ -81,11 +78,9 @@ export class AuthController {
       );
     }
 
-    const newRefreshToken = await tokens.refreshToken;
-
     this.setRefreshTokenCookies(newRefreshToken, response);
 
-    return;
+    return response.status(HttpStatus.OK).json({ accessToken: newAccessToken });
   }
 
   private setRefreshTokenCookies(
@@ -111,5 +106,11 @@ export class AuthController {
     };
 
     response.cookie(cookieName, cookieValue, cookieOptions);
+    response.status(HttpStatus.CREATED).json({ message: 'Рефреш токен був успішно встановлений в куки.' });
   };
+
+  @Get('verify-reset-token/:token')
+  async verifyReseToken() {
+    return await null;
+  }
 }
