@@ -14,7 +14,7 @@ export class AuthService {
   constructor(
     private readonly userService: UserService,
     private readonly tokenService: TokenService,
-    private readonly prismaService: PrismaService
+    private readonly prismaService: PrismaService,
   ) {}
 
   register(registerDto: RegisterDto): Promise<User> {
@@ -48,6 +48,10 @@ export class AuthService {
   }
 
   async deleteRefreshToken(refreshToken: string) {
-    await this.prismaService.token.delete({ where: { token: refreshToken } });
+    await this.prismaService.token
+      .delete({ where: { token: refreshToken } })
+      .catch((err: unknown) => {
+        this.logger.error(`Ошибка при удалении refresh token: ${err}`);
+      });
   }
 }

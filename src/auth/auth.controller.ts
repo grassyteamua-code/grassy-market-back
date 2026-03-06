@@ -80,7 +80,7 @@ export class AuthController {
     const refreshTokenName =
       this.configService.get<string>('REFRESH_TOKEN') ?? REFRESH_TOKEN;
     const today = new Date();
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+
     res.cookie(refreshTokenName, '', getCookieOptions(today));
 
     this.logger.log('Пользователь успешно вышел');
