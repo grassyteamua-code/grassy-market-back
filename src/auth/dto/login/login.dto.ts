@@ -5,5 +5,5 @@ export class LoginDto {
   password: string;
 
   @IsString({ message: "Ім'я користувача повинно бути рядком" })
-  username: string;
+  userName: string;
 }
