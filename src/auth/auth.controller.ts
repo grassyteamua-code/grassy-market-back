@@ -26,7 +26,10 @@ const REFRESH_TOKEN = 'refreshToken';
 export class AuthController {
   private readonly logger = new Logger(AuthController.name);
 
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly tokenService: TokenService,
+    private readonly authService: AuthService,
+  ) {}
 
   @Post('/register')
   async register(@Body() registerDto: RegisterDto) {
@@ -58,7 +61,6 @@ export class AuthController {
 
     this.setRefreshTokenCookies(await refreshToken, response);
   }
-
 
   @Get('verify-reset-token/:token')
   async verifyReseToken() {

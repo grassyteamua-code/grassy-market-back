@@ -31,77 +31,25 @@ export class AuthService {
     return createdUser;
   }
 
-  async login(loginDto: LoginDto) {
-    const { username, password } = loginDto;
+  async login(loginDto: LoginDto): Promise<ITokens> {
+    const { user, password } = loginDto;
 
-    let user: User | null = null;
-    try {
-      user = await this.userService.findByUsername(username);
-    } catch (err: unknown) {
-      const errorMessage =
-        err instanceof Error ? err.message : JSON.stringify(err);
-      this.logger.error(errorMessage);
-    }
+    const user: User = await this.userService
+      .findByUsername(user)
+      .catch((error) => {
+        const usernameIsNotValid = 'Невірне ім\'я користувача або пароль.';
+        this.logger.error(`Помилка при пошуку користувача: ${error}`);
+        throw new UnauthorizedException(usernameIsNotValid);
+      });
 
-    const isPasswordMatch = user && compareSync(password, user?.password);
+      const isPasswordMatch = user && comapareSync(password, user?.password);
 
-    if (!user || !isPasswordMatch) {
-      const textError =
-        'Недійсний логін або пароль. Будь ласка, спробуйте ввести ще раз.';
-      this.logger.error(textError);
-      throw new UnauthorizedException(textError);
-    }
+      if (!user || !isPasswordMatch) {
+        const passwordOrNicknameIsNotValid = 'Невірне ім\'я користувача або пароль.';
+        this.logger.error(passwordOrNicknameIsNotValid);
+        throw new UnauthorizedException(passwordOrNicknameIsNotValid);
+      }
 
-    const accessToken = this.jwtService.sign({
-      id: user.id,
-      username: user.username,
-      email: user.email,
-      role: user.role,
-    });
-
-    const refreshToken = this.getRefreshToken(user.id);
-    const tokens = { accessToken, refreshToken };
-
-    return tokens;
+      return this.genarateTokens(user);
   }
-
-  async refreshTokens(refreshToken: string) {
-    const token = await this.prismaService.token.delete({
-      where: {
-        token: refreshToken,
-      },
-    });
-
-    const today = dayjs();
-    const expireDate = dayjs(token.exripes);
-    const isExpired = expireDate.isBefore(today.toDate());
-
-    if (!token.expires || !isExpired) {
-      throw new UnauthorizedException('Недійсний токен оновлення.');
-    }
-    console.log("Токен оновлення дійсний", token);
-
-    const user = await this.userService.findById(token.userId);
-
-    return this.genarateTokens(user);
-  }
-
-  private getRefreshToken = async (userId: string): Promise<any> => {
-    const currentDate = dayjs();
-    const expireDate = currentDate
-      .add(
-        this.configService.get('TOKEN_EXPIRATION_UNIT'),
-        this.configService.get('TOKEN_EXPIRATION_VALUE'),
-      )
-      .toDate();
-
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    return await this.prismaService.token.create({
-      data: {
-        token: v4(),
-        exp: expireDate,
-        userId,
-      },
-    });
-  };
 }

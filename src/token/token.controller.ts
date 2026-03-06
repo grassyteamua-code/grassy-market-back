@@ -1,69 +1,35 @@
-import { 
-  Controller, 
-  Get, 
-  Res 
-} from '@nestjs/common';
+import { Controller, Get, Res, UnauthorizedException } from '@nestjs/common';
+import { Response } from 'express';
 import { TokenService } from './token.service';
 import { Public } from '@auth/guards/jwt-auth.guards';
 import { Cookies } from '@decorators/cookie.decoration';
-import { AuthService } from '@auth/auth.service';
+import { ConfigService } from '@nestjs/config';
 
-const REFRESH_TOKEN = 'refreshToken';
+const REFRESH_TOKEN = process.env.REFRESH_TOKEN || 'refreshToken';
 
 @Public()
 @Controller('token')
 export class TokenController {
-  constructor(
-    private readonly tokenService: TokenService,
-    private readonly authService: AuthService,
-  ) {}
-  
+  private readonly refreshToken: string;
+
+  constructor(private readonly tokenService: TokenService) {}
+
   @Get('refresh-tokens')
   async refreshTokens(
-    @Cookies(REFRESH_TOKEN): refreshToken: string,
-    @Res() response: Response,
-  {
-    if (!refreshToken) {
-      throw new UnauthorizedException(
-        'Рефреш токен відсутній. Будь ласка, увійдіть в систему знову.',
-      );
-    }
-    
-    const tokens = await this.authService.refreshTokens(refreshToken);
-
-    if (!tokens) {
-      throw new UnauthorizedException(
-        'Невірний рефреш токен. Будь ласка, увійдіть в систему знову.',
-      );
-    }
-
-    this.setRefreshTokenCookies(newRefreshToken, response);
-  }
-
-   private setRefreshTokenCookies(
-    refreshToken: Token,
-    response: Response,
+    @Cookies(REFRESH_TOKEN) refreshToken: string,
+    @Res() response: Response
   ) {
     if (!refreshToken) {
-      throw new UnauthorizedException(
-        'Помилка при встановленні рефреш токена. Будь ласка, спробуйте ще раз.',
-      );
+      throw new UnauthorizedException();
     }
 
-    const cookieName = 'refreshToken';
-    const cookieValue: string = refreshToken.token as string;
-    const cookieExpectTime = dayjs().add(7, 'day').toDate();
+    const tokens = await this.tokenService.refreshTokens(refreshToken);
 
-    const cookieOptions: ICookieOptions = {
-      httpOnly: true,
-      sameSite: 'lax',
-      secure: false,
-      path: '/',
-      exp: cookieExpectTime,
-    };
+    if (!tokens) {
+      throw new UnauthorizedException();
+    }
 
-    response.cookie(cookieName, cookieValue, cookieOptions);
-    response.status(HttpStatus.CREATED).json({ message: 'Рефреш токен був успішно встановлений в куки.' });
-  };
-
+    this.tokenService.setRefreshTokenToCookies(tokens, response);
+  }
 }
+
