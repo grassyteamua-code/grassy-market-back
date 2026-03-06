@@ -1,34 +1,69 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { 
+  Controller, 
+  Get, 
+  Res 
+} from '@nestjs/common';
 import { TokenService } from './token.service';
-import { CreateTokenDto } from './dto/create-token.dto';
-import { UpdateTokenDto } from './dto/update-token.dto';
+import { Public } from '@auth/guards/jwt-auth.guards';
+import { Cookies } from '@decorators/cookie.decoration';
+import { AuthService } from '@auth/auth.service';
 
+const REFRESH_TOKEN = 'refreshToken';
+
+@Public()
 @Controller('token')
 export class TokenController {
-  constructor(private readonly tokenService: TokenService) {}
+  constructor(
+    private readonly tokenService: TokenService,
+    private readonly authService: AuthService,
+  ) {}
+  
+  @Get('refresh-tokens')
+  async refreshTokens(
+    @Cookies(REFRESH_TOKEN): refreshToken: string,
+    @Res() response: Response,
+  {
+    if (!refreshToken) {
+      throw new UnauthorizedException(
+        'Рефреш токен відсутній. Будь ласка, увійдіть в систему знову.',
+      );
+    }
+    
+    const tokens = await this.authService.refreshTokens(refreshToken);
 
-  @Post()
-  create(@Body() createTokenDto: CreateTokenDto) {
-    return this.tokenService.create(createTokenDto);
+    if (!tokens) {
+      throw new UnauthorizedException(
+        'Невірний рефреш токен. Будь ласка, увійдіть в систему знову.',
+      );
+    }
+
+    this.setRefreshTokenCookies(newRefreshToken, response);
   }
 
-  @Get()
-  findAll() {
-    return this.tokenService.findAll();
-  }
+   private setRefreshTokenCookies(
+    refreshToken: Token,
+    response: Response,
+  ) {
+    if (!refreshToken) {
+      throw new UnauthorizedException(
+        'Помилка при встановленні рефреш токена. Будь ласка, спробуйте ще раз.',
+      );
+    }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.tokenService.findOne(+id);
-  }
+    const cookieName = 'refreshToken';
+    const cookieValue: string = refreshToken.token as string;
+    const cookieExpectTime = dayjs().add(7, 'day').toDate();
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTokenDto: UpdateTokenDto) {
-    return this.tokenService.update(+id, updateTokenDto);
-  }
+    const cookieOptions: ICookieOptions = {
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: false,
+      path: '/',
+      exp: cookieExpectTime,
+    };
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.tokenService.remove(+id);
-  }
+    response.cookie(cookieName, cookieValue, cookieOptions);
+    response.status(HttpStatus.CREATED).json({ message: 'Рефреш токен був успішно встановлений в куки.' });
+  };
+
 }
