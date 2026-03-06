@@ -19,7 +19,7 @@ export class CreateUserDto {
   @Length(2, 20, {
     message: 'Довжина нікнейму користувача повинна бути від 2 до 20 символів',
   })
-  username!: string;
+  userName!: string;
 
   @IsStrongPassword(
     {},

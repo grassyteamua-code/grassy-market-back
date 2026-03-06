@@ -3,5 +3,5 @@ export interface ICookieOptions {
   sameSite: 'lax' | 'strict' | 'none';
   secure: boolean;
   path: string;
-  exp: Date;
+  expires: Date;
 }

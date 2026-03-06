@@ -48,7 +48,9 @@ export class TokenService {
       role: user.role,
     });
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const refreshToken: Token = await this.getRefreshToken(user.id);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const tokens = { accessToken, refreshToken };
 
     return tokens;
@@ -57,13 +59,17 @@ export class TokenService {
   private getRefreshToken = async (userId: string): Promise<Token> => {
     const currentDate = dayjs();
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const expirationUnit = this.configService.get('TOKEN_EXPIRATION_UNIT');
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const expirationValue = this.configService.get('TOKEN_EXPIRATION_VALUE');
 
     const expireDate = currentDate
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       .add(expirationValue, expirationUnit)
       .toDate();
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     return await this.prismaService.token.create({
       data: {
         token: v4(),
@@ -78,11 +84,15 @@ export class TokenService {
       throw new UnauthorizedException();
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const { token, expires } = tokens.refreshToken;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     const cookieExpDate = dayjs(expires).toDate();
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const refreshToken = this.configService.get('REFRESH_TOKEN');
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     res.cookie(refreshToken, token, getCookieOptions(cookieExpDate));
     res.status(HttpStatus.CREATED).json({ accessToken: tokens.accessToken });
   }

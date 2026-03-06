@@ -1,9 +1,8 @@
 import { Controller, Get, Res, UnauthorizedException } from '@nestjs/common';
-import { Response } from 'express';
+import type { Response } from 'express';
 import { TokenService } from './token.service';
 import { Public } from '@auth/guards/jwt-auth.guards';
 import { Cookies } from '@decorators/cookie.decoration';
-import { ConfigService } from '@nestjs/config';
 
 const REFRESH_TOKEN = process.env.REFRESH_TOKEN || 'refreshToken';
 
@@ -17,7 +16,7 @@ export class TokenController {
   @Get('refresh-tokens')
   async refreshTokens(
     @Cookies(REFRESH_TOKEN) refreshToken: string,
-    @Res() response: Response
+    @Res() response: Response,
   ) {
     if (!refreshToken) {
       throw new UnauthorizedException();
@@ -32,4 +31,3 @@ export class TokenController {
     this.tokenService.setRefreshTokenToCookies(tokens, response);
   }
 }
-

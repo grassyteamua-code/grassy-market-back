@@ -26,6 +26,7 @@ export class UserService {
 
     const userData = {
       ...createUserDto,
+      userName: createUserDto.userName,
       password: hashedPassword,
       passwordRepeat: hashedPassword,
       status: 'active',
@@ -35,16 +36,16 @@ export class UserService {
     };
 
     const existingUserByUsername = await this.findByUsername(
-      createUserDto.username,
+      createUserDto.userName,
     );
 
     if (existingUserByUsername) {
-      const errorMessage = `Користувач з нікнеймом "${createUserDto.username}" вже існує.`;
+      const errorMessage = `Користувач з нікнеймом "${createUserDto.userName}" вже існує.`;
 
       this.logger.error(errorMessage);
 
       throw new BadRequestException(
-        `Користувач з таким нікнеймом "${createUserDto.username}" вже існує.`,
+        `Користувач з таким нікнеймом "${createUserDto.userName}" вже існує.`,
       );
     }
 
