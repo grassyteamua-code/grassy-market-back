@@ -1,0 +1,174 @@
+openapi: 3.0.0
+info:
+  title: Grassy Auth API
+  version: 1.0.0
+  description: Authentication endpoints for Grassy marketplace
+
+paths:
+  /auth/register:
+    post:
+      summary: Register new user
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterDto'
+            example:
+              email: "ivan.petrenko@example.com"
+              password: "StrongPass123@"
+              repeatPassword: "StrongPass123@"
+              userName: "ivanpetrenko"
+              firstName: "Іван"
+              lastName: "Петренко"
+              phone: "+380671234567"
+      responses:
+        '201':
+          description: User created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '400':
+          description: Validation or creation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /auth/login:
+    post:
+      summary: Login user and set refresh token cookie
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginDto'
+            example:
+              userName: "ivanpetrenko"
+              password: "StrongPass123@"
+      responses:
+        '200':
+          description: Returns access token and sets refresh token cookie
+          headers:
+            Set-Cookie:
+              description: Refresh token cookie (httpOnly)
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken:
+                    type: string
+                    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        '400':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /auth/logout:
+    get:
+      summary: Logout user and clear refresh token cookie
+      tags:
+        - Auth
+      parameters:
+        - name: Cookie
+          in: header
+          description: Cookie header with refresh token
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully logged out
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "You have been logged out"
+        '401':
+          description: Unauthorized or missing token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  schemas:
+    RegisterDto:
+      type: object
+      required:
+        - email
+        - password
+        - repeatPassword
+        - userName
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+        repeatPassword:
+          type: string
+        userName:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        phone:
+          type: string
+
+    LoginDto:
+      type: object
+      required:
+        - userName
+        - password
+      properties:
+        userName:
+          type: string
+        password:
+          type: string
+
+    UserResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        email:
+          type: string
+        userName:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+
+    ErrorResponse:
+      type: object
+      properties:
+        statusCode:
+          type: integer
+        message:
+          type: string
+        error:
+          type: string
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

@@ -10,58 +10,37 @@ export class CreateUserDto {
   @IsEmail(
     {},
     {
-      message: 'Будь ласка, введіть адресу Вашої електронної скриньки',
+      message: 'Введите email корректно',
     },
   )
-  email!: string;
+  email: string;
 
-  @IsString({ message: 'Нікнейм користувача повинно бути рядком' })
+  @IsStrongPassword(
+    {},
+    {
+      message:
+        'Пароль должен содержать цифры, заглавные и строчные буквы, а также специальные символы',
+    },
+  )
+  @MinLength(8, { message: 'Пароль должен содержать минимум 8 символов' })
+  password: string;
+
+  @IsString({ message: 'Псевдоним должен быть строкой' })
   @Length(2, 20, {
-    message: 'Довжина нікнейму користувача повинна бути від 2 до 20 символів',
+    message: 'Длина псевдонима должна быть от 2 до 20 символов',
   })
-  userName!: string;
+  userName: string;
 
-  @IsStrongPassword(
-    {},
-    {
-      message:
-        'Пароль повинен містити цифри, великі та малі літери, а також спеціальні символи',
-    },
-  )
-  @MinLength(8, { message: 'Пароль повинен містити мінімум 8 символів' })
-  password!: string;
+  @IsString({ message: 'Телефон должен быть строкой' })
+  @Length(6, 20, { message: 'Длина телефона должна быть от 6 до 20 символов' })
+  phone: string;
 
-  @IsStrongPassword(
-    {},
-    {
-      message:
-        'Пароль повинен містити цифри, великі та малі літери, а також спеціальні символи',
-    },
-  )
-  @MinLength(8, { message: 'Пароль повинен містити мінімум 8 символів' })
-  repeatPassword!: string;
+  @IsString({ message: 'Имя должно быть строкой' })
+  @Length(2, 20, { message: 'Длина имени должна быть от 2 до 20 символов' })
+  firstName: string;
 
-  @IsString({ message: 'Номер мобільного телефона повинен бути рядком' })
-  @Length(6, 20, {
-    message: 'Довжина номера телефона повинна бути від 6 до 20 символів',
-  })
-  phone!: string;
-
-  @IsString({ message: "Ім'я користувача повинно бути рядком" })
-  @Length(2, 50, {
-    message: 'Довжина імені користувача повинна бути від 2 до 50 символів',
-  })
-  firstName!: string;
-
-  @IsString({ message: 'Прізвище користувача повинно бути рядком' })
-  @Length(2, 50, {
-    message: 'Довжина прізвища повинна бути від 2 до 50 символів',
-  })
-  lastName!: string;
-
-  @IsString({ message: 'По-батькові користувача повинно бути рядком' })
-  @Length(2, 50, {
-    message: 'Довжина по-батькові повинна бути від 2 до 50 символів',
-  })
-  middleName!: string;
+  @IsString({ message: 'Фамилия должно быть строкой' })
+  @Length(2, 20, { message: 'Длина фамилии должна быть от 2 до 20 символов' })
+  lastName: string;
+  middleName: string;
 }

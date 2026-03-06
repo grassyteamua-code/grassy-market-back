@@ -1,10 +1,10 @@
 import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
-import { RegisterDto } from './dto/register/register.dto';
+import { RegisterDto } from '../auth/dto/register/register.dto';
 import { UserService } from '@user/user.service';
-import { LoginDto } from './dto/login/login.dto';
+import { LoginDto } from '../auth/dto/login/login.dto';
 import { compareSync } from 'bcrypt';
 import { User } from '@prisma/client';
-import { TokenService } from '../token/token.service';
+import { TokenService } from '@token/token.service';
 import { ITokens } from '../auth/interfaces/token.interface';
 import { PrismaService } from '@prisma/prisma.service';
 
@@ -14,7 +14,7 @@ export class AuthService {
   constructor(
     private readonly userService: UserService,
     private readonly tokenService: TokenService,
-    private readonly prismaService: PrismaService,
+    private readonly prismaService: PrismaService
   ) {}
 
   register(registerDto: RegisterDto): Promise<User> {
@@ -29,10 +29,9 @@ export class AuthService {
   async login(loginDto: LoginDto): Promise<ITokens> {
     const { userName, password } = loginDto;
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const user: User = await this.userService
+    const user: User | null = await this.userService
       .findByUsername(userName)
-      .catch((err) => {
+      .catch((err: unknown): null => {
         this.logger.error(err);
         return null;
       });
@@ -45,12 +44,10 @@ export class AuthService {
       throw new UnauthorizedException(textError);
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return this.tokenService.generateTokens(user);
   }
 
   async deleteRefreshToken(refreshToken: string) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     await this.prismaService.token.delete({ where: { token: refreshToken } });
   }
 }

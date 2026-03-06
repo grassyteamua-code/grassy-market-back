@@ -1,6 +1,6 @@
 export const corsOptions = {
   origin: ['http://localhost:5173'],
-  method: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  methods: 'GET, HEAD, PUT, PATCH, POST, DELETE, OPTIONS',
   allowedHeaders: [
     'Origin',
     'X-Requested-With',
@@ -8,6 +8,6 @@ export const corsOptions = {
     'Accept',
     'Authorization',
   ],
-  credential: true,
-  optionsSuccessStatus: 200,
+  credentials: true,
+  optionSuccessStatus: 200,
 };

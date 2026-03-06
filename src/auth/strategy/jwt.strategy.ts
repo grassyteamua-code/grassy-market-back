@@ -10,7 +10,7 @@ import { UserService } from '@user/user.service';
 export class JwtStrategy extends PassportStrategy(Strategy) {
   private readonly logger = new Logger(JwtStrategy.name);
   constructor(
-    private readonly configService: ConfigService,
+    configService: ConfigService,
     private readonly userService: UserService,
   ) {
     super({
@@ -20,18 +20,23 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(jwtPayload: JWTPayload) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const user: User = await this.userService
+  async validate(
+    jwtPayload: JWTPayload,
+    configService: ConfigService,
+  ): Promise<JWTPayload> {
+    const user: User | null = await this.userService
       .findById(jwtPayload.userId)
-      .catch((err) => {
-        this.logger.error(err);
+      .catch((err: unknown): User | null => {
+        if (err instanceof Error) {
+          this.logger.error(err.message);
+        }
         return null;
       });
 
     if (!user) {
       throw new UnauthorizedException();
     }
+    console.log('configService', configService);
 
     return jwtPayload;
   }

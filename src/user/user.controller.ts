@@ -9,9 +9,8 @@ import {
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import { User } from '@prisma/client';
-import { Public } from '../auth/guards/jwt-auth.guards';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { User } from '@prisma/client';
 
 @Controller('user')
 export class UserController {
@@ -27,46 +26,39 @@ export class UserController {
     return this.userService.findAll();
   }
 
-  @Get('find-one/:id')
-  findOne(@Param('id') id: string) {
+  @Get('find-by-id/:id')
+  findById(@Param('id') id: string) {
     return this.userService.findById(id);
   }
 
-  @Public()
-  @Get('find-by-username/:username')
-  async findByUsername(@Param('username') username: string): Promise<User> {
-    const user: User = await this.userService.findByUsername(username);
-
-    delete (user as Record<string, unknown>).password;
-
+  @Get('find-by-username/:userName')
+  async findByUsername(@Param('userName') userName: string) {
+    const user: User = await this.userService.findByUsername(userName);
+    delete user.password;
     return user;
   }
 
   @Get('find-by-email/:email')
-  async findByEmail(@Param('email') email: string): Promise<User> {
+  async findByEmail(@Param('email') email: string) {
     const user: User = await this.userService.findByEmail(email);
-
-    delete (user as Record<string, unknown>).email;
-
+    delete user.password;
     return user;
   }
 
   @Get('find-by-phone/:phone')
   async findByPhone(@Param('phone') phone: string) {
     const user: User = await this.userService.findByPhone(phone);
-
-    delete (user as Record<string, unknown>).phone;
-
+    delete user.password;
     return user;
   }
 
-  @Patch('update/:id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+  @Patch(':id')
+  async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.userService.update(id, updateUserDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  async remove(@Param('id') id: string) {
     return this.userService.remove(id);
   }
 }

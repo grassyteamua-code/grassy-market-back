@@ -1,22 +1,28 @@
 import {
   BadRequestException,
   Body,
+  Controller,
   Get,
   HttpStatus,
   Logger,
   Post,
   Res,
 } from '@nestjs/common';
-import { RegisterDto } from './dto/register/register.dto';
-import { LoginDto } from './dto/login/login.dto';
-import { TokenService } from 'src/token/token.service';
 import { AuthService } from './auth.service';
+import { RegisterDto } from '../auth/dto/register/register.dto';
+import { LoginDto } from '../auth/dto/login/login.dto';
+import { Public } from '../auth/guards/jwt-auth.guards';
+import { Response } from 'express';
+import { TokenService } from '@token/token.service';
+import { Cookies } from '../decorators/cookie.decoration';
 import { ConfigService } from '@nestjs/config';
-import { Cookies } from '@decorators/cookie.decoration';
 import { getCookieOptions } from '@utils/cookie-options.util';
+import { ITokens } from '../auth/interfaces/token.interface';
 
-const REFRESH_TOKEN = process.env.REFRESH_TOKEN || 'REFRESH_TOKEN';
+const REFRESH_TOKEN = process.env.REFRESH_TOKEN;
 
+@Public()
+@Controller('auth')
 export class AuthController {
   private readonly logger = new Logger(AuthController.name);
 
@@ -28,22 +34,21 @@ export class AuthController {
 
   @Post('register')
   async register(@Body() registerDto: RegisterDto) {
-    const createdUser = this.authService.register(registerDto);
+    const createdUser = await this.authService.register(registerDto);
 
-    // eslint-disable-next-line @typescript-eslint/no-misused-promises
     if (!createdUser) {
       const textError = 'Ошибка при создании пользователя';
       this.logger.error(textError);
       throw new BadRequestException(textError);
     }
 
+    this.logger.log('Пользователь успешно зарегистрирован');
     return createdUser;
   }
 
   @Post('login')
   async login(@Body() loginDto: LoginDto, @Res() res: Response) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const tokens = await this.authService.login(loginDto);
+    const tokens: ITokens = await this.authService.login(loginDto);
 
     if (!tokens) {
       const textError = 'Ошибка при попытке входа';
@@ -52,25 +57,35 @@ export class AuthController {
     }
 
     this.tokenService.setRefreshTokenToCookies(tokens, res);
+
+    this.logger.log('Пользователь успешно вошел');
+
+    return res.status(HttpStatus.OK).json({ accessToken: tokens.accessToken });
   }
 
   @Get('logout')
   async logout(
     @Cookies(REFRESH_TOKEN) refreshToken: string,
-    @Res() response: Response,
+    @Res() res: Response,
   ) {
     if (!refreshToken) {
-      response.sendStatus(HttpStatus.OK);
-      return;
+      this.logger.log('Попытка выхода без refresh token');
+      return res
+        .status(HttpStatus.OK)
+        .json({ message: 'Вы уже вышли из системы' });
     }
 
-    this.authService.deleteRefreshToken(refreshToken);
+    await this.authService.deleteRefreshToken(refreshToken);
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const refreshTokenName = this.configService.get('REFRESH_TOKEN');
+    const refreshTokenName =
+      this.configService.get<string>('REFRESH_TOKEN') ?? REFRESH_TOKEN;
     const today = new Date();
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+    res.cookie(refreshTokenName, '', getCookieOptions(today));
 
-    response.cookie(refreshTokenName, '', getCookieOptions(today));
-    response.sendStatus(HttpStatus.OK);
+    this.logger.log('Пользователь успешно вышел');
+    return res
+      .status(HttpStatus.OK)
+      .json({ message: 'Вы успешно вышли из системы' });
   }
 }

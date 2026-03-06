@@ -1,81 +1,18 @@
-import {
-  IsEmail,
-  IsString,
-  MinLength,
-  Length,
-  IsStrongPassword,
-  Validate,
-} from 'class-validator';
-import { MatchPasswordConstraint } from '@auth/validators/match-password.constrains';
+import { MatchPasswordsConstraint } from '../../validators/match-password.constrains';
+import { CreateUserDto } from '@user/dto/create-user.dto';
+import { IsStrongPassword, MinLength, Validate } from 'class-validator';
 
-export class RegisterDto {
-  @IsEmail(
-    {},
-    { message: 'Будь ласка, введіть адресу Вашої електронної скриньки' },
-  )
-  email!: string;
-
-  @IsString({
-    message: 'Будь ласка, введіть Ваше імя користувача (нікнейм)',
-  })
-  userName!: string;
-
+export class RegisterDto extends CreateUserDto {
   @IsStrongPassword(
     {},
     {
-      message: 'Будь ласка, введіть Ваш пароль',
+      message:
+        'Повторный пароль должен содержать цифры, заглавные и строчные буквы, а также специальные символы',
     },
   )
   @MinLength(8, {
-    message:
-      'Довжина пароля повинна бути щонаймешне вісім символів. Пароль повинен містити, як мінімум, одну маленьку літеру, одну велику та спецсимвол',
+    message: 'Повторный пароль должен содержать минимум 8 символов',
   })
-  password!: string;
-
-  @IsStrongPassword(
-    {},
-    {
-      message: 'Будь ласка, повторіть Ваш пароль',
-    },
-  )
-  @MinLength(8, {
-    message: 'Довжина пароля повинна бути щонаймешне вісім символів',
-  })
-  @Validate(MatchPasswordConstraint)
+  @Validate(MatchPasswordsConstraint)
   repeatPassword!: string;
-
-  @IsString({
-    message: 'Будь ласка, введіть Ваш номер мобільного телефону',
-  })
-  @Length(2, 50, {
-    message:
-      'Ваш номер мобільного телефону повинен містити Київстар: (067),(068),(096),(097),(098) Водафон: (050),(066),(099), ЛайфСелл: (063), (073) та 7 цифр після коду оператора',
-  })
-  phone!: string;
-
-  @IsString({
-    message: 'Будь ласка, введіть Ваше імя',
-  })
-  @Length(2, 50, {
-    message: 'Ваше імя повинно бути строкою, а не будь-якими іншими символами',
-  })
-  firstName!: string;
-
-  @IsString({
-    message: 'Будь ласка, введіть Ваше по-батькові',
-  })
-  @Length(2, 50, {
-    message:
-      'Ваше прізвище повинно бути строкою, а не будь-якими іншими символами',
-  })
-  lastName!: string;
-
-  @IsString({
-    message: 'Будь ласка, введіть Ваше по-батькові',
-  })
-  @Length(2, 50, {
-    message:
-      'Ваше по-батькові повинно бути строкою, а не будь-якими іншими символами',
-  })
-  middleName!: string;
 }

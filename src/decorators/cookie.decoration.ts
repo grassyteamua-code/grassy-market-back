@@ -1,13 +1,17 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
+import type { Request } from 'express';
+
+type CookiesMap = Record<string, string | undefined>;
 
 export const Cookies = createParamDecorator(
-  (data: string | undefined, ctx: ExecutionContext) => {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const request = ctx.switchToHttp().getRequest();
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-    const cookies = request.cookies;
+  (
+    key: string | undefined,
+    ctx: ExecutionContext,
+  ): string | CookiesMap | undefined => {
+    const request = ctx.switchToHttp().getRequest<Request>();
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access
-    return data ? cookies?.[data] : cookies;
+    const cookies = (request.cookies ?? {}) as CookiesMap;
+
+    return key ? cookies?.[key] : cookies;
   },
 );

@@ -4,7 +4,7 @@ CREATE TYPE "Role" AS ENUM ('SELLER', 'BUYER', 'CARRIER');
 -- CreateTable
 CREATE TABLE "users" (
     "id" TEXT NOT NULL,
-    "username" TEXT NOT NULL,
+    "userName" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "password" TEXT NOT NULL,
     "first_name" TEXT NOT NULL,
@@ -276,7 +276,7 @@ CREATE TABLE "password_reset_tokens" (
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "users_username_key" ON "users"("username");
+CREATE UNIQUE INDEX "users_userName_key" ON "users"("userName");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "users_email_key" ON "users"("email");

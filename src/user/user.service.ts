@@ -1,12 +1,13 @@
 import {
-  Injectable,
-  NotFoundException,
   BadRequestException,
+  ConflictException,
+  Injectable,
   Logger,
+  NotFoundException,
 } from '@nestjs/common';
+import { genSaltSync, hashSync } from 'bcrypt';
+import { PrismaService } from '@prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import { PrismaService } from '../prisma/prisma.service';
-import { hashSync, genSaltSync } from 'bcrypt';
 import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
@@ -16,62 +17,49 @@ export class UserService {
   constructor(private readonly prismaService: PrismaService) {}
 
   async create(createUserDto: CreateUserDto) {
-    if (!createUserDto.password || typeof createUserDto.password !== 'string') {
-      throw new BadRequestException(
-        "Пароль є обов'язковим і повинен вводитися як строка.",
-      );
-    }
-
     const hashedPassword = this.hashPassword(createUserDto.password);
 
     const userData = {
       ...createUserDto,
-      userName: createUserDto.userName,
       password: hashedPassword,
-      passwordRepeat: hashedPassword,
-      status: 'active',
-      firstName: createUserDto.firstName,
-      lastName: createUserDto.lastName,
-      middleName: createUserDto.middleName,
+      username: createUserDto.userName,
+      passwordRepeat: createUserDto.password,
+      status: 'ACTIVE',
     };
 
     const existingUserByUsername = await this.findByUsername(
       createUserDto.userName,
     );
-
     if (existingUserByUsername) {
-      const errorMessage = `Користувач з нікнеймом "${createUserDto.userName}" вже існує.`;
-
-      this.logger.error(errorMessage);
-
-      throw new BadRequestException(
-        `Користувач з таким нікнеймом "${createUserDto.userName}" вже існує.`,
-      );
+      const message = 'Пользователь с таким псевдонимом уже существует';
+      this.logger.error(message);
+      throw new ConflictException(message);
     }
 
     const existingUserByEmail = await this.findByEmail(createUserDto.email);
-
     if (existingUserByEmail) {
-      const errorMessage = `Користувач з електронною скринькою "${createUserDto.email}" вже існує.`;
+      const message = 'Пользователь с таким email уже существует';
+      this.logger.error(message);
+      throw new ConflictException(message);
+    }
 
-      this.logger.error(errorMessage);
-
-      throw new BadRequestException(
-        `Користувач з такою електронною скринькою "${createUserDto.email}" вже існує.`,
-      );
+    const existingUserByPhone = await this.findByPhone(createUserDto.phone);
+    if (existingUserByPhone) {
+      const message = 'Пользователь с таким телефоном уже существует';
+      this.logger.error(message);
+      throw new ConflictException(message);
     }
 
     const newUser = await this.prismaService.user
       .create({
         data: userData,
       })
-      .catch((error) => {
-        console.log('Помилка при створенні користувача:', error);
+      .catch((err) => {
+        this.logger.error('Ошибка при создании нового пользователя', err);
         throw new BadRequestException(
-          'Виникла помилка під час реєстрації нового користувача',
+          'Ошибка при создании нового пользователя',
         );
       });
-
     delete newUser.password;
 
     return newUser;
@@ -93,97 +81,92 @@ export class UserService {
 
         return foundedUser;
       })
-      .catch((error) => {
-        this.logger.error(
-          `Помилка при пошуку користувача за його ID: ${id}`,
-          error,
-        );
-        throw new NotFoundException('Користувач');
+      .catch((err) => {
+        this.logger.error('Ошибка при поиске пользователя по ID', err);
+        throw new NotFoundException('Пользователь по ID не найден');
       });
   }
 
-  async findByUsername(username: string) {
-    try {
-      const foundedUser = await this.prismaService.user.findFirst({
-        where: { username },
+  async findByUsername(userName: string) {
+    return this.prismaService.user
+      .findFirst({
+        where: { username: userName },
+      })
+      .then((foundedUser) => {
+        if (!foundedUser) {
+          return null;
+        }
+
+        return foundedUser;
+      })
+      .catch((err) => {
+        this.logger.error('Ошибка при поиске пользователя по псевдониму', err);
+        throw new NotFoundException('Пользователь по псевдониму не найден');
       });
-
-      if (!foundedUser) {
-        return null;
-      }
-
-      const { ...userWithoutPassword } = foundedUser;
-
-      return userWithoutPassword;
-    } catch {
-      throw new NotFoundException('Користувач був знайдений за нікнеймом.');
-    }
   }
 
   async findByEmail(email: string) {
-    try {
-      const foundedUser = await this.prismaService.user.findUnique({
+    return this.prismaService.user
+      .findUnique({
         where: { email },
+      })
+      .then((foundedUser) => {
+        if (!foundedUser) {
+          return null;
+        }
+
+        return foundedUser;
+      })
+      .catch((err) => {
+        this.logger.error('Ошибка при поиске пользователя по почте', err);
+        throw new NotFoundException('Пользователь по email не найден');
       });
-
-      if (!foundedUser) {
-        return null;
-      }
-
-      const { ...userWithoutPassword } = foundedUser;
-
-      return userWithoutPassword;
-    } catch (error) {
-      console.error(error);
-      throw new NotFoundException(
-        'Користувач був знайдений за електронною поштою.',
-      );
-    }
   }
 
-  async findByPhone(email: string) {
-    try {
-      const foundedUser = await this.prismaService.user.findUnique({
-        where: { email },
+  async findByPhone(phone: string) {
+    return this.prismaService.user
+      .findFirst({
+        where: { phone },
+      })
+      .then((foundedUser) => {
+        if (!foundedUser) {
+          return null;
+        }
+
+        return foundedUser;
+      })
+      .catch((err) => {
+        this.logger.error(
+          'Ошибка при поиске пользователя по номеру телефона',
+          err,
+        );
+        throw new NotFoundException(
+          'Пользователь по номеру телефона не найден',
+        );
       });
-
-      if (!foundedUser) {
-        return null;
-      }
-
-      const { ...userWithoutPassword } = foundedUser;
-
-      return userWithoutPassword;
-    } catch (error) {
-      console.error(error);
-      throw new NotFoundException(
-        'Користувач був знайдений за електронною поштою.',
-      );
-    }
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
-    return await this.prismaService.user.update({
+    return this.prismaService.user.update({
       where: { id },
       data: updateUserDto,
     });
   }
 
   async remove(id: string) {
-    return await this.prismaService.user
+    return this.prismaService.user
       .delete({
         where: { id },
       })
       .then((deletedUser) => {
-        return { message: 'Користувач успішно видалений', user: deletedUser };
+        return { message: 'Пользователь успешно удален', deletedUser };
       })
-      .catch((error) => {
-        this.logger.error('Користувач не знайдений для видалення.', error);
-        throw new Error(`Користувач не знайдений для видалення: ${error}`);
+      .catch((err: Error) => {
+        throw new Error(`Ошибка при удалении пользователя ${err.message}`);
       });
   }
 
-  private hashPassword(password: string): string {
+  private hashPassword(password: string) {
     return hashSync(password, genSaltSync(10));
   }
 }
