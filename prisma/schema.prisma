@@ -37,10 +37,9 @@ model User {
   payments          Payment[]
   tokens            Token[]
   transactions      Transaction[]
+  passwordResetTokens PasswordResetToken[]
 
   @@map("users")
-
-  passwordResetTokens PasswordResetToken[]
 }
 
 model SellerProfile {

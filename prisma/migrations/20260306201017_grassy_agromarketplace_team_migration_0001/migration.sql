@@ -241,6 +241,7 @@ CREATE TABLE "payments" (
 CREATE TABLE "tokens" (
     "id" TEXT NOT NULL,
     "token" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "expires_at" TIMESTAMP(3) NOT NULL,
     "userId" TEXT NOT NULL,
 
