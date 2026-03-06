@@ -29,9 +29,9 @@ export class UserService {
       password: hashedPassword,
       passwordRepeat: hashedPassword,
       status: 'active',
-      firstName: createUserDto.firstname,
-      lastName: createUserDto.lastname,
-      middleName: createUserDto.middlename,
+      firstName: createUserDto.firstName,
+      lastName: createUserDto.lastName,
+      middleName: createUserDto.middleName,
     };
 
     const existingUserByUsername = await this.findByUsername(
