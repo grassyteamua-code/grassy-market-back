@@ -16,7 +16,10 @@ import { Public } from './guards/jwt-auth.guards';
 import dayjs from 'dayjs';
 import type { Response } from 'express';
 import { Token } from 'src/token/entities/token.entity';
+import { Cookies } from 'src/decorators/cookies.decorator';
+import { ICookieOptions } from './interfaces/cookie-options.interface';
 
+const REFRESH_TOKEN = 'refreshToken';
 @Public()
 @Controller('auth')
 export class AuthController {
@@ -52,7 +55,7 @@ export class AuthController {
 
     const { refreshToken, accessToken } = tokens;
 
-    this.setRefreshTokenCookies(refreshToken, response);
+    this.setRefreshTokenCookies(await refreshToken, response);
 
     response.status(HttpStatus.CREATED).json({ accessToken });
 
@@ -60,26 +63,39 @@ export class AuthController {
   }
 
   @Get('refresh-tokens')
-  refreshTokens(refreshToken) {
+  async refreshTokens(
+    @Cookies(REFRESH_TOKEN): refreshToken: string,
+    @Res() response: Response,
+  {
+    if (!refreshToken) {
+      throw new UnauthorizedException(
+        'Рефреш токен відсутній. Будь ласка, увійдіть в систему знову.',
+      );
+    }
     
+    const tokens = await this.authService.refreshTokens(refreshToken);
+
+    if (!tokens) {
+      throw new UnauthorizedException(
+        'Невірний рефреш токен. Будь ласка, увійдіть в систему знову.',
+      );
+    }
+
+    const newRefreshToken = await tokens.refreshToken;
+
+    this.setRefreshTokenCookies(newRefreshToken, response);
+
+    return;
   }
 
-  private setRefreshTokenCookies = (
+  private setRefreshTokenCookies(
     refreshToken: Token,
     response: Response,
-  ) => {
+  ) {
     if (!refreshToken) {
       throw new UnauthorizedException(
         'Помилка при встановленні рефреш токена. Будь ласка, спробуйте ще раз.',
       );
-    }
-
-    interface ICookieOptions {
-      httpOnly: boolean;
-      sameSite: 'lax' | 'strict' | 'none';
-      secure: boolean;
-      path: string;
-      exp: Date;
     }
 
     const cookieName = 'refreshToken';

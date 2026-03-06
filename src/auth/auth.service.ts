@@ -65,8 +65,12 @@ export class AuthService {
     return result;
   }
 
-  refreshTokens() {
-    return null;
+  async refreshTokens(refreshToken: string) {
+    const token = await this.prismaService.token.delete({
+      where: {
+        token: refreshToken,
+      },
+    });
   }
 
   private getRefreshToken = async (userId: string): Promise<any> => {
