@@ -21,11 +21,17 @@ export class TokenService {
   ) {}
 
   async refreshTokens(refreshToken: string): Promise<ITokens> {
-    const token = await this.prismaService.token
+    const deletedToken = await this.prismaService.token
       .delete({
         where: { token: refreshToken },
       })
       .catch(() => null);
+
+    if (!deletedToken) {
+      console.log('Токен не знайдено або вже видалений');
+    } else {
+      console.log('Токен успішно видалено:', deletedToken);
+    }
 
     const today = dayjs();
     const expDate = dayjs(token.expires);

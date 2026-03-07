@@ -12,9 +12,10 @@ CREATE TABLE "users" (
     "last_name" TEXT NOT NULL,
     "phone" TEXT NOT NULL,
     "role" "Role"[] DEFAULT ARRAY['SELLER']::"Role"[],
-    "status" TEXT NOT NULL,
+    "status" TEXT NOT NULL DEFAULT 'PENDING',
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
+    "is_verified" BOOLEAN NOT NULL DEFAULT false,
 
     CONSTRAINT "users_pkey" PRIMARY KEY ("id")
 );
@@ -71,6 +72,9 @@ CREATE TABLE "carrier_profiles" (
     "driver_license" TEXT NOT NULL,
     "technical_passport" TEXT NOT NULL,
     "is_leased" BOOLEAN,
+    "shipping_rate" DOUBLE PRECISION NOT NULL,
+    "status_delivery" TEXT,
+    "type_delivery" TEXT,
     "accept_terms" BOOLEAN NOT NULL DEFAULT false,
     "userId" TEXT NOT NULL,
 
@@ -142,13 +146,13 @@ CREATE TABLE "reset_passwords" (
 -- CreateTable
 CREATE TABLE "products" (
     "id" TEXT NOT NULL,
-    "name" TEXT NOT NULL,
-    "description" TEXT,
-    "price" DECIMAL(65,30) NOT NULL,
-    "stock" INTEGER NOT NULL,
-    "sku" TEXT NOT NULL,
-    "is_active" BOOLEAN NOT NULL DEFAULT true,
-    "image_url" TEXT,
+    "unit" TEXT NOT NULL,
+    "harvestYear" INTEGER NOT NULL,
+    "minOrderQuantity" INTEGER NOT NULL,
+    "storagePlace" TEXT NOT NULL,
+    "quality_parameters:" TEXT NOT NULL DEFAULT 'humidity: 8%, protein and gluten content: , the number of falls:, garbage and grain impurities:. pest infestation:',
+    "total_views" INTEGER NOT NULL DEFAULT 0,
+    "total_inquiries" INTEGER NOT NULL DEFAULT 0,
     "categoryId" TEXT NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
@@ -228,6 +232,7 @@ CREATE TABLE "payments" (
     "status" TEXT,
     "currency" TEXT NOT NULL DEFAULT 'UAH',
     "payment_method" TEXT,
+    "invoice_url" TEXT,
     "transactionId" TEXT,
     "orderId" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
@@ -235,6 +240,22 @@ CREATE TABLE "payments" (
     "updated_at" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "payments_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Review" (
+    "id" TEXT NOT NULL,
+    "orderId" TEXT NOT NULL,
+    "authorId" TEXT NOT NULL,
+    "targetId" TEXT NOT NULL,
+    "target_type" TEXT NOT NULL,
+    "rating_quality" INTEGER NOT NULL,
+    "rating_delivery" INTEGER NOT NULL,
+    "rating_communication" INTEGER NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Review_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -275,6 +296,16 @@ CREATE TABLE "password_reset_tokens" (
     CONSTRAINT "password_reset_tokens_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "verification_tokens" (
+    "id" TEXT NOT NULL,
+    "token_hash" TEXT NOT NULL,
+    "expires_at" TIMESTAMP(3) NOT NULL,
+    "user_id" TEXT NOT NULL,
+
+    CONSTRAINT "verification_tokens_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "users_userName_key" ON "users"("userName");
 
@@ -300,9 +331,6 @@ CREATE UNIQUE INDEX "carrier_profiles_edrpou_key" ON "carrier_profiles"("edrpou"
 CREATE UNIQUE INDEX "carrier_profiles_userId_key" ON "carrier_profiles"("userId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "products_sku_key" ON "products"("sku");
-
--- CreateIndex
 CREATE UNIQUE INDEX "categories_slug_key" ON "categories"("slug");
 
 -- CreateIndex
@@ -316,6 +344,12 @@ CREATE UNIQUE INDEX "tokens_token_key" ON "tokens"("token");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "password_reset_tokens_token_key" ON "password_reset_tokens"("token");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "verification_tokens_token_hash_key" ON "verification_tokens"("token_hash");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "verification_tokens_user_id_key" ON "verification_tokens"("user_id");
 
 -- AddForeignKey
 ALTER TABLE "sellers_profiles" ADD CONSTRAINT "sellers_profiles_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -382,3 +416,6 @@ ALTER TABLE "transactions" ADD CONSTRAINT "transactions_paymentId_fkey" FOREIGN 
 
 -- AddForeignKey
 ALTER TABLE "password_reset_tokens" ADD CONSTRAINT "password_reset_tokens_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "verification_tokens" ADD CONSTRAINT "verification_tokens_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
