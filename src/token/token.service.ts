@@ -22,25 +22,30 @@ export class TokenService {
   ) {}
 
   async refreshTokens(refreshToken: string): Promise<ITokens> {
-    const deletedToken: Token | null = await this.prismaService.token
-      .delete({
+    const tokenRecord: Token | null = await this.prismaService.token.findUnique(
+      {
         where: { token: refreshToken },
-      })
-      .catch((): null => null);
+      },
+    );
 
-    if (!deletedToken) {
+    if (!tokenRecord) {
       throw new UnauthorizedException();
     }
 
     const today = dayjs();
-    const expDate = dayjs(deletedToken.expiresAt);
-    const isExpired = expDate.isBefore(today);
+    const expDate = dayjs(tokenRecord.expiresAt);
+    const isExpired = !tokenRecord.expiresAt || expDate.isBefore(today);
 
-    if (!deletedToken.expiresAt || isExpired) {
+    if (isExpired) {
+      await this.prismaService.token
+        .delete({ where: { token: refreshToken } })
+        .catch(() => null);
       throw new UnauthorizedException();
     }
 
-    const user = await this.userService.findById(deletedToken.userId);
+    await this.prismaService.token.delete({ where: { token: refreshToken } });
+
+    const user = await this.userService.findById(tokenRecord.userId);
 
     return this.generateTokens(user);
   }
@@ -90,7 +95,8 @@ export class TokenService {
     const { token, expiresAt } = tokens.refreshToken;
     const cookieExpDate = dayjs(expiresAt).toDate();
 
-    const refreshToken = this.configService.get<string>('REFRESH_TOKEN');
+    const refreshToken =
+      this.configService.get<string>('REFRESH_TOKEN') ?? 'refreshToken';
 
     res.cookie(refreshToken, token, getCookieOptions(cookieExpDate));
     res.status(HttpStatus.CREATED).json({ accessToken: tokens.accessToken });
