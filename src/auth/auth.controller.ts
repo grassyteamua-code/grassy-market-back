@@ -13,10 +13,10 @@ import { RegisterDto } from '../auth/dto/register/register.dto';
 import { LoginDto } from '../auth/dto/login/login.dto';
 import { Public } from '../auth/guards/jwt-auth.guards';
 import { Response } from 'express';
-import { TokenService } from '@token/token.service';
+import { TokenService } from '../token/token.service';
 import { Cookies } from '../decorators/cookie.decoration';
 import { ConfigService } from '@nestjs/config';
-import { getCookieOptions } from '@utils/cookie-options.util';
+import { getCookieOptions } from '../utils/cookie-options.util';
 import { ITokens } from '../auth/interfaces/token.interface';
 
 const REFRESH_TOKEN = process.env.REFRESH_TOKEN;

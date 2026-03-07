@@ -15,7 +15,7 @@ import dayjs from 'dayjs';
 import { ConfigService } from '@nestjs/config';
 import { ITokens } from '../auth/interfaces/token.interface';
 import { Response } from 'express';
-import { getCookieOptions } from '@utils/cookie-options.util';
+import { getCookieOptions } from '../utils/cookie-options.util';
 
 type TokenRecord = {
   token: string;
@@ -57,14 +57,12 @@ export class TokenService {
       throw new UnauthorizedException('Refresh token expired');
     }
 
-    // 3) delete token to enforce single-use refresh tokens
     await this.prismaService.token
       .delete({ where: { token: refreshToken } })
       .catch((err) => {
         this.logger.error('Failed to delete refresh token', err);
       });
 
-    // 4) load user
     const user = await this.prismaService.user.findUnique({
       where: { id: tokenRecord.userId },
     });
@@ -73,7 +71,6 @@ export class TokenService {
       throw new UnauthorizedException('User not found');
     }
 
-    // generate new tokens
     return this.generateTokens(user);
   }
 

@@ -1,12 +1,12 @@
 import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
-import { RegisterDto } from '@auth/dto/register/register.dto';
-import { UserService } from '@user/user.service';
-import { LoginDto } from '@auth/dto/login/login.dto';
+import { RegisterDto } from '../auth/dto/register/register.dto';
+import { UserService } from '../user/user.service';
+import { LoginDto } from '../auth/dto/login/login.dto';
 import { compareSync } from 'bcrypt';
 import { User } from '@prisma/client';
-import { TokenService } from '@token/token.service';
-import { ITokens } from '@auth/interfaces/token.interface';
-import { PrismaService } from '@prisma/prisma.service';
+import { TokenService } from '../token/token.service';
+import { ITokens } from '../auth/interfaces/token.interface';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class AuthService {
@@ -48,7 +48,7 @@ export class AuthService {
   async deleteRefreshToken(refreshToken: string) {
     await this.prismaService.token
       .delete({ where: { token: refreshToken } })
-      .catch((err: unknown) => {
+      .catch((err) => {
         this.logger.error(`Ошибка при удалении refresh token: ${err}`);
       });
   }

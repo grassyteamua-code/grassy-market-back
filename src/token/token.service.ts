@@ -1,16 +1,16 @@
 import { Token } from '@prisma/client';
 import type { ManipulateType } from 'dayjs';
 import { HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
-import { UserService } from '@user/user.service';
+import { UserService } from '../user/user.service';
 import { User } from '@prisma/client';
 import { JwtService } from '@nestjs/jwt';
-import { PrismaService } from '@prisma/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 import { v4 } from 'uuid';
 import dayjs from 'dayjs';
 import { ConfigService } from '@nestjs/config';
-import { ITokens } from '@auth/interfaces/token.interface';
+import { ITokens } from '../auth/interfaces/token.interface';
 import { Response } from 'express';
-import { getCookieOptions } from '@utils/cookie-options.util';
+import { getCookieOptions } from '../utils/cookie-options.util';
 
 @Injectable()
 export class TokenService {
