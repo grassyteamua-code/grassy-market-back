@@ -102,14 +102,4 @@
 
 Для ефективної роботи з базою даних й сервером рекомендуємо завантажити `.env`-файл звідси (https://drive.google.com/file/d/1Qc3O8grPrc1mRtbvJeA671xSmfAd-He_/view?usp=sharing) або створюємо `.env`-файл самостійно у корні репозиторія (цей файл повинен знаходитися перед `.gitignore`-файлом в репозиторії) та копіюємо змінні оточення, що знаходяться нижче, й вставляємо у свій файл, а також завантажуємо пакетний менеджер `node_module` звідси (https://drive.google.com/drive/folders/1G1-nBOO3zVqVIqyNypTpPYAi1bt-_Wp4?usp=sharing) або встановлюємо `node_module` самостійно та додаємо усі необхідні залежності поступово.
 
-## 📌 Призначення змінних оточення:
- 
-- Змінна `DATABASE_URL` слугує для зв'язку між Prisma ORM та Neon Serverless Postgres базою даних;
-- Змінна `PORT` слугує для запуску сервера локально на вказаному порту;
-
-```bash
-DATABASE_URL=postgresql://neondb_owner:npg_sD4fXhvT9GyR@ep-little-surf-a18vye4s-pooler.ap-southeast-1.aws.neon.tech/prisma_migrate_shadow_db_43238705-f513-4530-88a1-38463ccbf0a0?sslmode=require&channel_binding=require
-PORT=3001
-```
-
 ## 📖 Робота зі Swagger OpenAPI:
