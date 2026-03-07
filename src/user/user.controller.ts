@@ -41,16 +41,14 @@ export class UserController {
   @Get('find-by-email/:email')
   async findByEmail(@Param('email') email: string) {
     const user: User = await this.userService.findByEmail(email);
-    delete user.password;
     return user;
   }
 
-  @Get('find-by-phone/:phone')
-  async findByPhone(@Param('phone') phone: string) {
-    const user: User = await this.userService.findByPhone(phone);
-    delete user.password;
-    return user;
-  }
+  // @Get('find-by-phone/:phone')
+  // async findByPhone(@Param('phone') phone: string) {
+  //   const user: User = await this.userService.findByPhone(phone);
+  //   return user;
+  // }
 
   @Patch(':id')
   async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {

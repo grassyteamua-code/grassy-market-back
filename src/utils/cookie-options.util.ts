@@ -1,4 +1,4 @@
-import { ICookieOptions } from '../auth/interfaces/cookie-options.interface';
+import { ICookieOptions } from '@auth/interfaces/cookie-options.interface';
 
 export const getCookieOptions = (expires: Date): ICookieOptions => ({
   httpOnly: true,

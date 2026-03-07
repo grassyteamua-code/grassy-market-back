@@ -1,12 +1,15 @@
 import {
   HttpStatus,
   Injectable,
+  Module,
   UnauthorizedException,
   Logger,
 } from '@nestjs/common';
-import { User } from '@prisma/client';
+import { JwtModule } from '@nestjs/jwt';
+import { jwtModuleAsyncOptions } from '../config/jwt-module.config';
+import { Token, User } from '@prisma/client';
 import { JwtService } from '@nestjs/jwt';
-import { PrismaService } from '@prisma/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 import { v4 as uuidv4 } from 'uuid';
 import dayjs from 'dayjs';
 import { ConfigService } from '@nestjs/config';
@@ -16,7 +19,7 @@ import { getCookieOptions } from '@utils/cookie-options.util';
 
 type TokenRecord = {
   token: string;
-  expires: Date;
+  expiresAt: Date;
   userId: string;
 };
 
@@ -35,9 +38,11 @@ export class TokenService {
       throw new UnauthorizedException('Refresh token is required');
     }
 
-    const tokenRecord = await this.prismaService.token.findUnique({
-      where: { token: refreshToken },
-    });
+    const tokenRecord: Token | null = await this.prismaService.token.findUnique(
+      {
+        where: { token: refreshToken },
+      },
+    );
 
     if (!tokenRecord) {
       this.logger.warn('Refresh token not found');
@@ -45,8 +50,8 @@ export class TokenService {
     }
 
     const now = dayjs();
-    const expiresAt = dayjs(tokenRecord.expires);
-    if (!tokenRecord.expires || expiresAt.isBefore(now)) {
+    const expiresAt = dayjs(tokenRecord.expiresAt);
+    if (!tokenRecord.expiresAt || expiresAt.isBefore(now)) {
       await this.prismaService.token
         .delete({ where: { token: refreshToken } })
         .catch(() => null);
@@ -86,7 +91,7 @@ export class TokenService {
       accessToken,
       refreshToken: {
         token: refreshTokenRecord.token,
-        expires: refreshTokenRecord.expires,
+        expiresAt: refreshTokenRecord.expiresAt,
       },
     } as unknown as ITokens;
   }
@@ -106,14 +111,14 @@ export class TokenService {
     const created = await this.prismaService.token.create({
       data: {
         token: tokenValue,
-        expires,
+        expiresAt: expires,
         userId,
       },
     });
 
     return {
       token: created.token,
-      expires: created.expires,
+      expiresAt: created.expiresAt,
       userId: created.userId,
     };
   }
@@ -123,10 +128,11 @@ export class TokenService {
       throw new UnauthorizedException('Tokens are required');
     }
 
-    const { token: refreshTokenValue, expires } = tokens.refreshToken;
-    const cookieExpDate = dayjs(expires).toDate();
+    const { token: refreshTokenValue, expiresAt } = tokens.refreshToken as unknown as TokenRecord;
+    const cookieExpDate = dayjs(expiresAt).toDate();
 
-    const refreshTokenName = this.configService.get<string>('REFRESH_TOKEN') ?? 'refreshToken';
+    const refreshTokenName =
+      this.configService.get<string>('REFRESH_TOKEN') ?? 'refreshToken';
 
     res.cookie(
       refreshTokenName,
@@ -136,3 +142,10 @@ export class TokenService {
     res.status(HttpStatus.CREATED).json({ accessToken: tokens.accessToken });
   }
 }
+
+@Module({
+  imports: [JwtModule.registerAsync(jwtModuleAsyncOptions())],
+  providers: [TokenService],
+  exports: [TokenService],
+})
+export class TokenModule {}

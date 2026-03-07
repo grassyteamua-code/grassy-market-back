@@ -1,11 +1,11 @@
 import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
-import { RegisterDto } from '../auth/dto/register/register.dto';
+import { RegisterDto } from '@auth/dto/register/register.dto';
 import { UserService } from '@user/user.service';
-import { LoginDto } from '../auth/dto/login/login.dto';
+import { LoginDto } from '@auth/dto/login/login.dto';
 import { compareSync } from 'bcrypt';
 import { User } from '@prisma/client';
 import { TokenService } from '@token/token.service';
-import { ITokens } from '../auth/interfaces/token.interface';
+import { ITokens } from '@auth/interfaces/token.interface';
 import { PrismaService } from '@prisma/prisma.service';
 
 @Injectable()
@@ -21,9 +21,7 @@ export class AuthService {
     const createUserDto = registerDto;
     delete createUserDto.repeatPassword;
 
-    const createdUser = this.userService.create(createUserDto);
-
-    return createdUser;
+    return this.userService.create(createUserDto);
   }
 
   async login(loginDto: LoginDto): Promise<ITokens> {

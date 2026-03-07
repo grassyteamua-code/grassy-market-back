@@ -43,12 +43,12 @@ export class UserService {
       throw new ConflictException(message);
     }
 
-    const existingUserByPhone = await this.findByPhone(createUserDto.phone);
-    if (existingUserByPhone) {
-      const message = 'Пользователь с таким телефоном уже существует';
-      this.logger.error(message);
-      throw new ConflictException(message);
-    }
+    // const existingUserByPhone = await this.findByPhone(createUserDto.phone);
+    // if (existingUserByPhone) {
+    //   const message = 'Пользователь с таким телефоном уже существует';
+    //   this.logger.error(message);
+    //   throw new ConflictException(message);
+    // }
 
     const newUser = await this.prismaService.user
       .create({
@@ -90,7 +90,7 @@ export class UserService {
   async findByUsername(userName: string) {
     return this.prismaService.user
       .findFirst({
-        where: { username: userName },
+        where: { userName: userName },
       })
       .then((foundedUser) => {
         if (!foundedUser) {
@@ -123,28 +123,28 @@ export class UserService {
       });
   }
 
-  async findByPhone(phone: string) {
-    return this.prismaService.user
-      .findFirst({
-        where: { phone },
-      })
-      .then((foundedUser) => {
-        if (!foundedUser) {
-          return null;
-        }
+  // async findByPhone(phone: string) {
+  //   return this.prismaService.user
+  //     .findUnique({
+  //       where: { phone },
+  //     })
+  //     .then((foundedUser) => {
+  //       if (!foundedUser) {
+  //         return null;
+  //       }
 
-        return foundedUser;
-      })
-      .catch((err) => {
-        this.logger.error(
-          'Ошибка при поиске пользователя по номеру телефона',
-          err,
-        );
-        throw new NotFoundException(
-          'Пользователь по номеру телефона не найден',
-        );
-      });
-  }
+  //       return foundedUser;
+  //     })
+  //     .catch((err) => {
+  //       this.logger.error(
+  //         'Ошибка при поиске пользователя по номеру телефона',
+  //         err,
+  //       );
+  //       throw new NotFoundException(
+  //         'Пользователь по номеру телефона не найден',
+  //       );
+  //     });
+  // }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
     return this.prismaService.user.update({
