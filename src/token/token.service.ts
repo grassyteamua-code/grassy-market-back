@@ -62,8 +62,12 @@ export class TokenService {
   private getRefreshToken = async (userId: string): Promise<Token> => {
     const currentDate = dayjs();
 
-    const expirationUnit = this.configService.get<string>('TOKEN_EXPIRATION_UNIT');
-    const expirationValue = this.configService.get<number>('TOKEN_EXPIRATION_VALUE');
+    const expirationUnit = this.configService.get<string>(
+      'TOKEN_EXPIRATION_UNIT',
+    );
+    const expirationValue = this.configService.get<number>(
+      'TOKEN_EXPIRATION_VALUE',
+    );
 
     const expireDate = currentDate
       .add(expirationValue ?? 7, (expirationUnit ?? 'day') as ManipulateType)
