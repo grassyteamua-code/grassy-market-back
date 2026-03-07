@@ -31,21 +31,24 @@ export class UserService {
       createUserDto.userName,
     );
     if (existingUserByUsername) {
-      const message = 'Пользователь с таким псевдонимом уже существует';
+      const message =
+        'Користувач з таким нікнеймом уже існує в системі. Будь ласка, спробуйте інший нікнейм.';
       this.logger.error(message);
       throw new ConflictException(message);
     }
 
     const existingUserByEmail = await this.findByEmail(createUserDto.email);
     if (existingUserByEmail) {
-      const message = 'Пользователь с таким email уже существует';
+      const message =
+        'Користувача з такою ж адресою електронної скриньки вже існує в системі. Будь ласка, спробуйте іншу адресу.';
       this.logger.error(message);
       throw new ConflictException(message);
     }
 
     const existingUserByPhone = await this.findByPhone(createUserDto.phone);
     if (existingUserByPhone) {
-      const message = 'Пользователь с таким телефоном уже существует';
+      const message =
+        'Користувача з таким номером мобільного телефону вже існує в системі. Будь ласка, спробуйте інший номер.';
       this.logger.error(message);
       throw new ConflictException(message);
     }
@@ -55,9 +58,12 @@ export class UserService {
         data: userData,
       })
       .catch((err) => {
-        this.logger.error('Ошибка при создании нового пользователя', err);
+        this.logger.error(
+          'Сталося помилка під час створення нового користувача в системі. Будь ласка, спробуйте ще раз',
+          err,
+        );
         throw new BadRequestException(
-          'Ошибка при создании нового пользователя',
+          'Сталося помилка під час створення нового користувача в системі. Будь ласка, спробуйте ще раз',
         );
       });
     delete newUser.password;
@@ -82,8 +88,13 @@ export class UserService {
         return foundedUser;
       })
       .catch((err) => {
-        this.logger.error('Ошибка при поиске пользователя по ID', err);
-        throw new NotFoundException('Пользователь по ID не найден');
+        this.logger.error(
+          'Сталася помилка під час пошуку користувача за вказаним індитифікатором користувача (ID). Будь ласка, спробуйте ще раз',
+          err,
+        );
+        throw new NotFoundException(
+          'Користувача за вказаним індитифікатором користувача (ID) було не знайдено. Будь ласка, спробуйте ще ра',
+        );
       });
   }
 
@@ -100,8 +111,13 @@ export class UserService {
         return foundedUser;
       })
       .catch((err) => {
-        this.logger.error('Ошибка при поиске пользователя по псевдониму', err);
-        throw new NotFoundException('Пользователь по псевдониму не найден');
+        this.logger.error(
+          'Сталася помилка під час пошуку користувача за вказаним псевдонімом. Будь ласка, спробуйте ще раз',
+          err,
+        );
+        throw new NotFoundException(
+          `Користувача із зазначеним псевдонімом: ${userName} не було знайдено. Будь ласка, спробуйте ще раз`,
+        );
       });
   }
 
@@ -118,8 +134,13 @@ export class UserService {
         return foundedUser;
       })
       .catch((err) => {
-        this.logger.error('Ошибка при поиске пользователя по почте', err);
-        throw new NotFoundException('Пользователь по email не найден');
+        this.logger.error(
+          'Сталася помилка під час пошуку користувача за вказaнoю адресою електронної скриньки. Будь ласка, спробуйте ще раз',
+          err,
+        );
+        throw new NotFoundException(
+          'Користувача за вказanoю адресою електронної скриньки не знайдено. Будь ласка, спробуйте ще раз',
+        );
       });
   }
 
@@ -137,11 +158,11 @@ export class UserService {
       })
       .catch((err) => {
         this.logger.error(
-          'Ошибка при поиске пользователя по номеру телефона',
+          'Сталася помилка під час пошуку користувача за вказаним номером мобільного телефону. Будь ласка, спробуйте ще раз',
           err,
         );
         throw new NotFoundException(
-          'Пользователь по номеру телефона не найден',
+          'Користувача за вказаним номером мобільного телефону не знайдено. Будь ласка, спробуйте ще раз',
         );
       });
   }
@@ -159,10 +180,16 @@ export class UserService {
         where: { id },
       })
       .then((deletedUser) => {
-        return { message: 'Пользователь успешно удален', deletedUser };
+        return {
+          message:
+            'Користувача було успішно видалено з системи агромаркетрлейсу "Grassy"',
+          deletedUser,
+        };
       })
       .catch((err: Error) => {
-        throw new Error(`Ошибка при удалении пользователя ${err.message}`);
+        throw new Error(
+          `Сталася помилка під час видалення користувача із системи агромаркетрлейсу "Grassy": ${err.message}`,
+        );
       });
   }
 
