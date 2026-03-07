@@ -44,11 +44,11 @@ export class UserController {
     return user;
   }
 
-  // @Get('find-by-phone/:phone')
-  // async findByPhone(@Param('phone') phone: string) {
-  //   const user: User = await this.userService.findByPhone(phone);
-  //   return user;
-  // }
+  @Get('find-by-phone/:phone')
+  async findByPhone(@Param('phone') phone: string) {
+    const user: User = await this.userService.findByPhone(phone);
+    return user;
+  }
 
   @Patch(':id')
   async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {

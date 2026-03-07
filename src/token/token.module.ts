@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { jwtModuleAsyncOptions } from '../config/jwt-module.config';
-import { Token, User } from '@prisma/client';
+import { User } from '@prisma/client';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../prisma/prisma.service';
 import { v4 as uuidv4 } from 'uuid';
@@ -65,7 +65,9 @@ export class TokenService {
       });
 
     // 4) load user
-    const user = await this.prismaService.user.findUnique({ where: { id: tokenRecord.userId } });
+    const user = await this.prismaService.user.findUnique({
+      where: { id: tokenRecord.userId },
+    });
     if (!user) {
       this.logger.error('User for refresh token not found', tokenRecord.userId);
       throw new UnauthorizedException('User not found');
@@ -95,7 +97,8 @@ export class TokenService {
   }
 
   private async createRefreshToken(userId: string): Promise<TokenRecord> {
-    const expirationUnit = this.configService.get<string>('TOKEN_EXPIRATION_UNIT') ?? 'day';
+    const expirationUnit =
+      this.configService.get<string>('TOKEN_EXPIRATION_UNIT') ?? 'day';
     const expirationValue = Number(
       this.configService.get<string>('TOKEN_EXPIRATION_VALUE') ?? 30,
     );
@@ -126,7 +129,8 @@ export class TokenService {
       throw new UnauthorizedException('Tokens are required');
     }
 
-    const { token: refreshTokenValue, expiresAt } = tokens.refreshToken as unknown as TokenRecord;
+    const { token: refreshTokenValue, expiresAt } =
+      tokens.refreshToken as unknown as TokenRecord;
     const cookieExpDate = dayjs(expiresAt).toDate();
 
     const refreshTokenName =
