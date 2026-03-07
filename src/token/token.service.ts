@@ -26,7 +26,7 @@ export class TokenService {
       .delete({
         where: { token: refreshToken },
       })
-      .catch(() => null);
+      .catch((): null => null);
 
     if (!deletedToken) {
       throw new UnauthorizedException();

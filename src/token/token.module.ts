@@ -16,6 +16,7 @@ import { ConfigService } from '@nestjs/config';
 import { ITokens } from '../auth/interfaces/token.interface';
 import { Response } from 'express';
 import { getCookieOptions } from '../utils/cookie-options.util';
+import { UserModule } from '../user/user.module';
 
 type TokenRecord = {
   token: string;
@@ -143,7 +144,7 @@ export class TokenService {
 }
 
 @Module({
-  imports: [JwtModule.registerAsync(jwtModuleAsyncOptions())],
+  imports: [JwtModule.registerAsync(jwtModuleAsyncOptions()), UserModule],
   providers: [TokenService],
   exports: [TokenService],
 })
