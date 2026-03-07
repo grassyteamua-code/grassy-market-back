@@ -38,11 +38,9 @@ export class TokenService {
       throw new UnauthorizedException('Refresh token is required');
     }
 
-    const tokenRecord: Token | null = await this.prismaService.token.findUnique(
-      {
-        where: { token: refreshToken },
-      },
-    );
+    const tokenRecord = await this.prismaService.token.findUnique({
+      where: { token: refreshToken },
+    });
 
     if (!tokenRecord) {
       this.logger.warn('Refresh token not found');
