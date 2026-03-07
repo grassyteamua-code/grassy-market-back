@@ -14,6 +14,6 @@ export class MatchPasswordsConstraint implements ValidatorConstraintInterface {
   }
 
   defaultMessage(): string {
-    return 'Введенные пароли не совпадают';
+    return 'Введені користувачем паролі не співпадають. Будь ласка, спробуйте ще раз.';
   }
 }

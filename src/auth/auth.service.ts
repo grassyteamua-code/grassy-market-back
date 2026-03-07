@@ -37,7 +37,8 @@ export class AuthService {
     const isPasswordMatch = user && compareSync(password, user?.password);
 
     if (!user || !isPasswordMatch) {
-      const textError = 'Неверные логин или пароль';
+      const textError =
+        'Користувачем були введені неправильний логін або паролю. Будь ласка, спробуйте ще раз';
       this.logger.error(textError);
       throw new UnauthorizedException(textError);
     }
@@ -49,7 +50,9 @@ export class AuthService {
     await this.prismaService.token
       .delete({ where: { token: refreshToken } })
       .catch((err) => {
-        this.logger.error(`Ошибка при удалении refresh token: ${err}`);
+        this.logger.error(
+          `Сталася помилка під час видалення refresh token: ${err}`,
+        );
       });
   }
 }

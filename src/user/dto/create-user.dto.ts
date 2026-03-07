@@ -42,5 +42,8 @@ export class CreateUserDto {
   @IsString({ message: 'Фамилия должно быть строкой' })
   @Length(2, 20, { message: 'Длина фамилии должна быть от 2 до 20 символов' })
   lastName: string;
+
+  @IsString({ message: 'Отчество должно быть строкой' })
+  @Length(2, 20, { message: 'Длина отчества должна быть от 2 до 20 символов' })
   middleName: string;
 }

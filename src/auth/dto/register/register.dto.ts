@@ -16,7 +16,8 @@ export class RegisterDto extends CreateUserDto {
     },
   )
   @MinLength(8, {
-    message: 'Повторний пароль повинен містити, як мінімум, вісім символів або більше',
+    message:
+      'Повторний пароль повинен містити, як мінімум, вісім символів або більше',
   })
   @Validate(MatchPasswordsConstraint)
   repeatPassword!: string;
